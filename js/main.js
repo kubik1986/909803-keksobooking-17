@@ -30,7 +30,7 @@ var pinTemplate = document.querySelector('#pin')
     .querySelector('.map__pin');
 var pinXMax = mapPinsBlockWidth - PIN_WIDTH / 2;
 
-var pinsData = {
+var offersData = {
   types: OFFERS_TYPES,
   titles: OFFERS_TITLES,
   pinXMin: PIN_X_MIN,
@@ -47,31 +47,27 @@ var getRandomNumberFromRange = function (min, max) {
   return Math.floor(Math.random() * (max + 1 - min)) + min;
 };
 
-var generateOffer = function (int, data) {
-  var userID = (int + 1) >= 10 ? int + 1 : '0' + (int + 1);
-
-  return {
-    'author': {
-      'avatar': 'img/avatars/user' + userID + '.png'
-    },
-
-    'offer': {
-      'type': getRandomArrayItem(data.types),
-      'title': getRandomArrayItem(data.titles)
-    },
-
-    'location': {
-      'x': getRandomNumberFromRange(data.pinXMin, data.pinXMax),
-      'y': getRandomNumberFromRange(data.pinYMin, data.pinYMax)
-    }
-  };
-};
-
 var getSimilarOffers = function (amount, data) {
   var result = [];
 
   for (var i = 0; i < amount; i++) {
-    result.push(generateOffer(i, data));
+    var userID = (i + 1) >= 10 ? i + 1 : '0' + (i + 1);
+
+    result.push({
+      'author': {
+        'avatar': 'img/avatars/user' + userID + '.png'
+      },
+
+      'offer': {
+        'type': getRandomArrayItem(data.types),
+        'title': getRandomArrayItem(data.titles)
+      },
+
+      'location': {
+        'x': getRandomNumberFromRange(data.pinXMin, data.pinXMax),
+        'y': getRandomNumberFromRange(data.pinYMin, data.pinYMax)
+      }
+    });
   }
 
   return result;
@@ -99,6 +95,6 @@ var renderPins = function (similarOffers) {
   mapPinsBlock.appendChild(fragment);
 };
 
-var similarOffers = getSimilarOffers(OFFERS_AMOUNT, pinsData);
+var similarOffers = getSimilarOffers(OFFERS_AMOUNT, offersData);
 map.classList.remove('map--faded');
 renderPins(similarOffers);
