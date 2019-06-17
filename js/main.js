@@ -154,13 +154,20 @@ var activatePage = function () {
   pins = renderPins(getSimilarOffers(OFFERS_AMOUNT));
   activateForm(filtersFormFields);
   isPageActive = true;
+
+  mainPin.removeEventListener('click', onMainPinClick);
+};
+
+var onMainPinClick = function () {
+  if (!isPageActive) {
+    activatePage();
+    setAdFormAddress(getMainPinCoordinates());
+  }
+
+  mainPin.addEventListener('mouseup', onMainPinMouseup);
 };
 
 var onMainPinMouseup = function () {
-  if (!isPageActive) {
-    activatePage();
-  }
-
   setAdFormAddress(getMainPinCoordinates());
 };
 
@@ -175,6 +182,8 @@ var resetPage = function () {
     adForm.reset();
     filtersForm.reset();
     setMainPinPos(mainPinStartPos.left, mainPinStartPos.top);
+
+    mainPin.removeEventListener('mouseup', onMainPinMouseup);
   }
 
   map.classList.add('map--faded');
@@ -184,7 +193,7 @@ var resetPage = function () {
   setAdFormAddress(getMainPinCoordinates(true));
   isPageActive = false;
 
-  mainPin.addEventListener('mouseup', onMainPinMouseup);
+  mainPin.addEventListener('click', onMainPinClick);
 };
 
 resetPage();
