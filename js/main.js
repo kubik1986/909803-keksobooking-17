@@ -44,15 +44,6 @@ var adFormAddressInput = adForm.querySelector('#address');
 var filtersForm = document.querySelector('.map__filters');
 var filtersFormFields = filtersForm.querySelectorAll('select, fieldset');
 
-var offersData = {
-  types: OFFERS_TYPES,
-  titles: OFFERS_TITLES,
-  pinXMin: PIN_X_MIN,
-  pinXMax: pinXMax,
-  pinYMin: PIN_Y_MIN,
-  pinYMax: PIN_Y_MAX
-};
-
 var getRandomArrayItem = function (array) {
   return array[Math.floor(Math.random() * array.length)];
 };
@@ -61,7 +52,7 @@ var getRandomNumberFromRange = function (min, max) {
   return Math.floor(Math.random() * (max + 1 - min)) + min;
 };
 
-var getSimilarOffers = function (amount, data) {
+var getSimilarOffers = function (amount) {
   var result = [];
 
   for (var i = 0; i < amount; i++) {
@@ -73,13 +64,13 @@ var getSimilarOffers = function (amount, data) {
       },
 
       'offer': {
-        'type': getRandomArrayItem(data.types),
-        'title': getRandomArrayItem(data.titles)
+        'type': getRandomArrayItem(OFFERS_TYPES),
+        'title': getRandomArrayItem(OFFERS_TITLES)
       },
 
       'location': {
-        'x': getRandomNumberFromRange(data.pinXMin, data.pinXMax),
-        'y': getRandomNumberFromRange(data.pinYMin, data.pinYMax)
+        'x': getRandomNumberFromRange(PIN_X_MIN, pinXMax),
+        'y': getRandomNumberFromRange(PIN_Y_MIN, PIN_Y_MAX)
       }
     });
   }
@@ -103,9 +94,9 @@ var createPin = function (similarOffer) {
 var renderPins = function (similarOffers) {
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < similarOffers.length; i++) {
-    fragment.appendChild(createPin(similarOffers[i]));
-  }
+  similarOffers.forEach(function (offer) {
+    fragment.appendChild(createPin(offer));
+  });
   pinsBlock.appendChild(fragment);
 
   return pinsBlock.querySelectorAll('.map__pin:not([class$="main"])');
@@ -113,6 +104,7 @@ var renderPins = function (similarOffers) {
 
 var clearPins = function (pinsCol) {
   var last = pinsBlock.lastChild;
+
   for (var i = 0; i < pinsCol.length; i++) {
     pinsBlock.removeChild(last);
     last = pinsBlock.lastChild;
@@ -121,28 +113,28 @@ var clearPins = function (pinsCol) {
 };
 
 var activateForm = function (formFields) {
-  for (var i = 0; i < formFields.length; i++) {
-    formFields[i].removeAttribute('disabled');
-  }
+  formFields.forEach(function (formField) {
+    formField.removeAttribute('disabled');
+  });
 };
 
 var deactivateForm = function (formFields) {
-  for (var i = 0; i < formFields.length; i++) {
-    formFields[i].setAttribute('disabled', '');
-  }
+  formFields.forEach(function (formField) {
+    formField.setAttribute('disabled', '');
+  });
 };
 
-var getPinCoordinates = function (pin, pinWidth, pinHeight, isCenter) {
-  var x = Math.round(pin.offsetLeft + pinWidth / 2);
+var getMainPinCoordinates = function (isCenter) {
+  var x = Math.round(mainPin.offsetLeft + MAIN_PIN_WIDTH / 2);
   var y;
 
   if (isCenter === undefined) {
     isCenter = false;
   }
   if (isCenter) {
-    y = Math.round(pin.offsetTop + pinWidth / 2);
+    y = Math.round(mainPin.offsetTop + MAIN_PIN_WIDTH / 2);
   } else {
-    y = Math.round(pin.offsetTop + pinHeight);
+    y = Math.round(mainPin.offsetTop + MAIN_PIN_HEIGHT);
   }
 
   return {
@@ -159,7 +151,7 @@ var activatePage = function () {
   map.classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
   activateForm(adFormFields);
-  pins = renderPins(getSimilarOffers(OFFERS_AMOUNT, offersData));
+  pins = renderPins(getSimilarOffers(OFFERS_AMOUNT));
   activateForm(filtersFormFields);
   isPageActive = true;
 };
@@ -169,7 +161,7 @@ var onMainPinMouseup = function () {
     activatePage();
   }
 
-  setAdFormAddress(getPinCoordinates(mainPin, MAIN_PIN_WIDTH, MAIN_PIN_HEIGHT));
+  setAdFormAddress(getMainPinCoordinates());
 };
 
 var setMainPinPos = function (left, top) {
@@ -189,7 +181,7 @@ var resetPage = function () {
   adForm.classList.add('ad-form--disabled');
   deactivateForm(adFormFields);
   deactivateForm(filtersFormFields);
-  setAdFormAddress(getPinCoordinates(mainPin, MAIN_PIN_WIDTH, MAIN_PIN_HEIGHT, true));
+  setAdFormAddress(getMainPinCoordinates(true));
   isPageActive = false;
 
   mainPin.addEventListener('mouseup', onMainPinMouseup);
