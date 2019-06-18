@@ -114,13 +114,13 @@ var clearPins = function (pinsCol) {
 
 var activateForm = function (formFields) {
   formFields.forEach(function (formField) {
-    formField.removeAttribute('disabled');
+    formField.disabled = false;
   });
 };
 
 var deactivateForm = function (formFields) {
   formFields.forEach(function (formField) {
-    formField.setAttribute('disabled', '');
+    formField.disabled = true;
   });
 };
 
