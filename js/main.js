@@ -24,6 +24,13 @@ var PIN_Y_MAX = 630;
 var MAIN_PIN_WIDTH = 65;
 var MAIN_PIN_HEIGHT = 80;
 
+var OffersMinPrices = {
+  'bungalo': 0,
+  'flat': 1000,
+  'house': 5000,
+  'palace': 10000
+};
+
 var isPageActive = false;
 var map = document.querySelector('.map');
 var pins = [];
@@ -41,6 +48,13 @@ var pinXMax = pinsBlockWidth - PIN_WIDTH / 2;
 var adForm = document.querySelector('.ad-form');
 var adFormFields = adForm.querySelectorAll('fieldset');
 var adFormAddressInput = adForm.querySelector('#address');
+var adFormTypeInput = adForm.querySelector('#type');
+var adFormPriceInput = adForm.querySelector('#price');
+var adFormTimeinSelect = adForm.querySelector('#timein');
+var adFormTimeoutSelect = adForm.querySelector('#timeout');
+var adFormRoomNumberSelect = adForm.querySelector('#room_number');
+var adFormCapacitySelect = adForm.querySelector('#capacity');
+var adFormReset = adForm.querySelector('.ad-form__reset');
 var filtersForm = document.querySelector('.map__filters');
 var filtersFormFields = filtersForm.querySelectorAll('select, fieldset');
 
@@ -147,6 +161,45 @@ var setAdFormAddress = function (pinCoordinates) {
   adFormAddressInput.value = pinCoordinates.x + ', ' + pinCoordinates.y;
 };
 
+var setAdFormPrice = function (value) {
+  adFormPriceInput.min = OffersMinPrices[value];
+  adFormPriceInput.placeholder = OffersMinPrices[value];
+};
+
+var setAdFormTimes = function (value) {
+  adFormTimeinSelect.value = value;
+  adFormTimeoutSelect.value = value;
+};
+
+var setAdFormCapacity = function (roomNumber) {
+  var options = adFormCapacitySelect.options;
+
+  if (+roomNumber < 100) {
+    Array.prototype.forEach.call(options, function (option) {
+      option.disabled = (+option.value > +roomNumber || +option.value === 0) ? true : false;
+      if (+roomNumber >= 2 && +option.value === 2) {
+        option.selected = true;
+      } else if (+roomNumber === 1 && +option.value === 1) {
+        option.selected = true;
+      }
+    });
+  } else {
+    Array.prototype.forEach.call(options, function (option) {
+      option.disabled = (+option.value > 0) ? true : false;
+      if (+option.value === 0) {
+        option.selected = true;
+      }
+    });
+  }
+};
+
+var adFormInit = function () {
+  setAdFormAddress(getMainPinCoordinates(true));
+  setAdFormPrice(adFormTypeInput.value);
+  setAdFormTimes(adFormTimeinSelect.value);
+  setAdFormCapacity(adFormRoomNumberSelect.value);
+};
+
 var activatePage = function () {
   map.classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
@@ -156,19 +209,8 @@ var activatePage = function () {
   isPageActive = true;
 
   mainPin.removeEventListener('click', onMainPinClick);
-};
-
-var onMainPinClick = function () {
-  if (!isPageActive) {
-    activatePage();
-    setAdFormAddress(getMainPinCoordinates());
-  }
-
-  mainPin.addEventListener('mouseup', onMainPinMouseup);
-};
-
-var onMainPinMouseup = function () {
-  setAdFormAddress(getMainPinCoordinates());
+  adForm.addEventListener('change', onAdFormChange);
+  adFormReset.addEventListener('click', onAdFormResetClick);
 };
 
 var setMainPinPos = function (left, top) {
@@ -184,16 +226,53 @@ var resetPage = function () {
     setMainPinPos(mainPinStartPos.left, mainPinStartPos.top);
 
     mainPin.removeEventListener('mouseup', onMainPinMouseup);
+    adForm.removeEventListener('change', onAdFormChange);
+    adFormReset.removeEventListener('click', onAdFormResetClick);
   }
 
   map.classList.add('map--faded');
   adForm.classList.add('ad-form--disabled');
+  adFormInit();
   deactivateForm(adFormFields);
   deactivateForm(filtersFormFields);
-  setAdFormAddress(getMainPinCoordinates(true));
   isPageActive = false;
 
   mainPin.addEventListener('click', onMainPinClick);
+};
+
+var onMainPinClick = function () {
+  if (!isPageActive) {
+    activatePage();
+    setAdFormAddress(getMainPinCoordinates());
+  }
+
+  mainPin.addEventListener('mouseup', onMainPinMouseup);
+};
+
+var onMainPinMouseup = function () {
+  setAdFormAddress(getMainPinCoordinates());
+};
+
+var onAdFormChange = function (evt) {
+  var target = evt.target;
+
+  switch (target.id) {
+    case 'type':
+      setAdFormPrice(target.value);
+      break;
+    case 'timein':
+    case 'timeout':
+      setAdFormTimes(target.value);
+      break;
+    case 'room_number':
+      setAdFormCapacity(target.value);
+      break;
+  }
+};
+
+var onAdFormResetClick = function (evt) {
+  evt.preventDefault();
+  resetPage();
 };
 
 resetPage();
