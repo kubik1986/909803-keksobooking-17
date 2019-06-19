@@ -175,14 +175,19 @@ var setAdFormCapacity = function (roomNumber) {
   var options = adFormCapacitySelect.options;
 
   if (+roomNumber < 100) {
+    var selectedInitOption = options[adFormCapacitySelect.selectedIndex];
+    var isValidOptionSelected = false;
+
     Array.prototype.forEach.call(options, function (option) {
       option.disabled = (+option.value > +roomNumber || +option.value === 0) ? true : false;
-      if (+roomNumber >= 2 && +option.value === 2) {
+      if (!isValidOptionSelected && !option.disabled) {
         option.selected = true;
-      } else if (+roomNumber === 1 && +option.value === 1) {
-        option.selected = true;
+        isValidOptionSelected = true;
       }
     });
+    if (!selectedInitOption.disabled) {
+      selectedInitOption.selected = true;
+    }
   } else {
     Array.prototype.forEach.call(options, function (option) {
       option.disabled = (+option.value > 0) ? true : false;
