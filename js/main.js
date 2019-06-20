@@ -183,26 +183,24 @@ var setAdFormCapacity = function (roomNumber) {
   var options = adFormCapacitySelect.options;
 
   if (+roomNumber < 100) {
-    var selectedInitOption = options[adFormCapacitySelect.selectedIndex];
-    var isValidOptionSelected = false;
-
     Array.prototype.forEach.call(options, function (option) {
       option.disabled = (+option.value > +roomNumber || +option.value === 0) ? true : false;
-      if (!isValidOptionSelected && !option.disabled) {
-        option.selected = true;
-        isValidOptionSelected = true;
-      }
     });
-    if (!selectedInitOption.disabled) {
-      selectedInitOption.selected = true;
-    }
   } else {
     Array.prototype.forEach.call(options, function (option) {
       option.disabled = (+option.value > 0) ? true : false;
-      if (+option.value === 0) {
-        option.selected = true;
-      }
     });
+  }
+  setAdFormCapacityValidity();
+};
+
+var setAdFormCapacityValidity = function () {
+  var selectedOption = adFormCapacitySelect.options[adFormCapacitySelect.selectedIndex];
+
+  if (selectedOption.disabled) {
+    adFormCapacitySelect.setCustomValidity('Укажите подходящее количество мест');
+  } else {
+    adFormCapacitySelect.setCustomValidity('');
   }
 };
 
@@ -211,6 +209,7 @@ var adFormInit = function () {
   setAdFormPrice(adFormTypeInput.value);
   setAdFormTimes(adFormTimeinSelect.value);
   setAdFormCapacity(adFormRoomNumberSelect.value);
+  setAdFormCapacityValidity();
 };
 
 var activatePage = function () {
@@ -255,7 +254,6 @@ var initPage = function () {
   resetPage();
   mainPin.addEventListener('mousedown', onMainPinMousedown);
 };
-
 
 var onMainPinMousedown = function (evt) {
   evt.preventDefault();
@@ -341,6 +339,8 @@ var onAdFormChange = function (evt) {
     case 'room_number':
       setAdFormCapacity(target.value);
       break;
+    case 'capacity':
+      setAdFormCapacityValidity();
   }
 };
 
