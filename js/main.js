@@ -237,6 +237,7 @@ var resetPage = function () {
     filtersForm.reset();
     setMainPinPos(mainPinStartPos.left, mainPinStartPos.top);
     offers = [];
+    window.scrollTo(0, 0);
 
     adForm.removeEventListener('change', onAdFormChange);
     adFormReset.removeEventListener('click', onAdFormResetClick);
