@@ -258,7 +258,6 @@ var initPage = function () {
 var onMainPinMousedown = function (evt) {
   evt.preventDefault();
 
-  var isDragged = false;
   var startCoords = {
     x: evt.clientX,
     y: evt.clientY
@@ -266,7 +265,9 @@ var onMainPinMousedown = function (evt) {
 
   var onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
-    isDragged = true;
+    if (!isPageActive) {
+      activatePage();
+    }
 
     var shift = {
       x: startCoords.x - moveEvt.clientX,
@@ -295,26 +296,14 @@ var onMainPinMousedown = function (evt) {
     }
 
     setMainPinPos(pinLeft + 'px', pinTop + 'px');
-    if (isPageActive) {
-      setAdFormAddress(getMainPinCoordinates());
-    } else {
-      setAdFormAddress(getMainPinCoordinates(true));
-    }
+    setAdFormAddress(getMainPinCoordinates());
   };
 
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
 
-    if (!isPageActive && isDragged) {
-      activatePage();
-    }
-
-    if (isPageActive) {
-      setAdFormAddress(getMainPinCoordinates());
-
-      if (pins.length === 0) {
-        pins = renderPins(offers);
-      }
+    if (isPageActive && pins.length === 0) {
+      pins = renderPins(offers);
     }
 
     document.removeEventListener('mousemove', onMouseMove);
