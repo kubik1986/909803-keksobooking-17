@@ -15,7 +15,7 @@
       var amount = (this.offers.length > OFFERS_AMOUNT) ? OFFERS_AMOUNT : this.offers.length;
 
       if (!isFilterOn) {
-        var shuffledOffers = window.utils.shuffleArray(this.offers);
+        var shuffledOffers = window.utils.shuffleArray(this.offers.slice());
 
         for (var i = 0; i < shuffledOffers.length; i++) {
           if (result.length === amount) {
