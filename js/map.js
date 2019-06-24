@@ -16,10 +16,10 @@
       map.classList.add('map--faded');
     },
 
-    renderPins: function (similarOffers) {
+    renderPins: function (offers) {
       var fragment = document.createDocumentFragment();
 
-      similarOffers.forEach(function (offer) {
+      offers.forEach(function (offer) {
         fragment.appendChild(window.pin.create(offer));
       });
       pinsBlock.appendChild(fragment);
