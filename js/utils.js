@@ -7,6 +7,11 @@
     ENTER: 13
   };
 
+  var Words = {
+    ROOM: ['комната', 'комнаты', 'комнат'],
+    GUEST_GENITIVE: ['гостя', 'гостей', 'гостей']
+  };
+
   window.utils = {
     getRandomArrayItem: function (array) {
       return array[Math.floor(Math.random() * array.length)];
@@ -25,6 +30,27 @@
       }
 
       return array;
+    },
+
+    numFormat: function (num, word) {
+      var result = '';
+      if (!Words.hasOwnProperty(word)) {
+        return result;
+      }
+
+      var count = num % 100;
+      if (count > 19) {
+        count = count % 10;
+      }
+      if (count === 1) {
+        result = Words[word][0];
+      } else if (count >= 2 && count <= 4) {
+        result = Words[word][1];
+      } else {
+        result = Words[word][2];
+      }
+
+      return result;
     },
 
     activateFormFields: function (formFields) {
