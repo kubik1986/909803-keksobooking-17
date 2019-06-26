@@ -2,8 +2,9 @@
 
 (function () {
 
-  var PIN_Y_MIN = 130;
-  var PIN_Y_MAX = 630;
+  var PIN_Y_MIN = 170;
+  var PIN_Y_MAX = 700;
+  // Диапазон значения координаты метки Y изменен умышленно по сравнению со значениями в ТЗ, которые не отображают реальное положение горизонта и панели фильтров
   var MAIN_PIN_WIDTH = 65;
   var MAIN_PIN_HEIGHT = 80;
 
@@ -37,6 +38,7 @@
       moveEvt.preventDefault();
       if (!isPageActive) {
         activatePage();
+        window.backend.load(onOffersLoad, onOffersError);
       }
 
       var shift = {
@@ -71,11 +73,6 @@
 
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
-
-      if (isPageActive && window.map.pins.length === 0) {
-        window.map.renderPins(window.data.offers);
-      }
-
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
@@ -87,6 +84,19 @@
   var onAdFormResetClick = function (evt) {
     evt.preventDefault();
     resetPage();
+  };
+
+  var onOffersLoad = function (offers) {
+    window.data.offers = offers;
+    window.data.filterOffers();
+    window.map.renderPins(window.data.filteredOffers);
+    window.utils.activateFormFields(filtersFormFields);
+  };
+
+  var onOffersError = function (errorText) {
+    window.alerts.showError('Не удалось загрузить похожие объявления.<br>' + errorText, function () {
+      window.backend.load(onOffersLoad, onOffersError);
+    });
   };
 
   var getMainPinCoordinates = function (isCenter) {
@@ -116,8 +126,6 @@
   var activatePage = function () {
     window.map.activate();
     window.adForm.activate();
-    window.data.offers = window.data.getSimilarOffers();
-    window.utils.activateFormFields(filtersFormFields);
 
     adFormReset.addEventListener('click', onAdFormResetClick);
 

@@ -7,15 +7,16 @@
       .querySelector('.map__pin');
 
   window.pin = {
-    create: function (offer) {
+    create: function (id, ad) {
       var pinElement = pinTemplate.cloneNode(true);
       var img = pinElement.querySelector('img');
 
-      pinElement.style.left = offer.location.x + 'px';
-      pinElement.style.top = offer.location.y + 'px';
+      pinElement.dataset.id = id;
+      pinElement.style.left = ad.location.x + 'px';
+      pinElement.style.top = ad.location.y + 'px';
       pinElement.style.transform = 'translate(-50%, -100%)';
-      img.src = offer.author.avatar;
-      img.alt = offer.offer.title;
+      img.src = ad.author.avatar;
+      img.alt = ad.offer.title;
 
       return pinElement;
     }

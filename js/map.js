@@ -16,12 +16,12 @@
       map.classList.add('map--faded');
     },
 
-    renderPins: function (similarOffers) {
+    renderPins: function (offers) {
       var fragment = document.createDocumentFragment();
 
-      similarOffers.forEach(function (offer) {
-        fragment.appendChild(window.pin.create(offer));
-      });
+      for (var i = 0; i < offers.length; i++) {
+        fragment.appendChild(window.pin.create(i, offers[i]));
+      }
       pinsBlock.appendChild(fragment);
 
       this.pins = pinsBlock.querySelectorAll('.map__pin:not([class$="main"])');
