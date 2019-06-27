@@ -134,6 +134,7 @@
 
   var resetPage = function () {
     if (isPageActive) {
+      window.map.closeCard();
       window.map.clearPins();
       filtersForm.reset();
       setMainPinPos(mainPinStartPos.left, mainPinStartPos.top);
