@@ -13,7 +13,7 @@
   var capacitySelect = form.querySelector('#capacity');
   var isFormActive = false;
 
-  var OffersMinPrices = {
+  var offerMinPricesMap = {
     'bungalo': 0,
     'flat': 1000,
     'house': 5000,
@@ -21,8 +21,8 @@
   };
 
   var setPrice = function (value) {
-    priceInput.min = OffersMinPrices[value];
-    priceInput.placeholder = OffersMinPrices[value];
+    priceInput.min = offerMinPricesMap[value];
+    priceInput.placeholder = offerMinPricesMap[value];
   };
 
   var setTimes = function (value) {

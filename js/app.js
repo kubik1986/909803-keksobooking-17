@@ -2,11 +2,15 @@
 
 (function () {
 
-  var PIN_Y_MIN = 170;
-  var PIN_Y_MAX = 700;
+  var LocationLimit = {
+    MIN_Y: 170,
+    MAX_Y: 700
+  };
   // Диапазон значения координаты метки Y изменен умышленно по сравнению со значениями в ТЗ, которые не отображают реальное положение горизонта и панели фильтров
-  var MAIN_PIN_WIDTH = 65;
-  var MAIN_PIN_HEIGHT = 80;
+  var MainPinSize = {
+    WIDTH: 65,
+    HEIGHT: 80
+  };
 
   var isPageActive = false;
   var pinsBlock = document.querySelector('.map__pins');
@@ -19,11 +23,11 @@
   var filtersForm = document.querySelector('.map__filters');
   var filtersFormFields = filtersForm.querySelectorAll('select, fieldset');
 
-  var PinPositionLimits = {
-    minLeft: 0,
-    maxLeft: pinsBlock.offsetWidth - MAIN_PIN_WIDTH,
-    minTop: PIN_Y_MIN - MAIN_PIN_HEIGHT,
-    maxTop: PIN_Y_MAX - MAIN_PIN_HEIGHT
+  var PinPositionLimit = {
+    MIN_LEFT: 0,
+    MAX_LEFT: pinsBlock.offsetWidth - MainPinSize.WIDTH,
+    MIN_TOP: LocationLimit.MIN_Y - MainPinSize.HEIGHT,
+    MAX_TOP: LocationLimit.MAX_Y - MainPinSize.HEIGHT
   };
 
   var onMainPinMousedown = function (evt) {
@@ -54,17 +58,17 @@
       var pinLeft = mainPin.offsetLeft - shift.x;
       var pinTop = mainPin.offsetTop - shift.y;
 
-      if (pinLeft < PinPositionLimits.minLeft) {
-        pinLeft = PinPositionLimits.minLeft;
+      if (pinLeft < PinPositionLimit.MIN_LEFT) {
+        pinLeft = PinPositionLimit.MIN_LEFT;
       }
-      if (pinLeft > PinPositionLimits.maxLeft) {
-        pinLeft = PinPositionLimits.maxLeft;
+      if (pinLeft > PinPositionLimit.MAX_LEFT) {
+        pinLeft = PinPositionLimit.MAX_LEFT;
       }
-      if (pinTop < PinPositionLimits.minTop) {
-        pinTop = PinPositionLimits.minTop;
+      if (pinTop < PinPositionLimit.MIN_TOP) {
+        pinTop = PinPositionLimit.MIN_TOP;
       }
-      if (pinTop > PinPositionLimits.maxTop) {
-        pinTop = PinPositionLimits.maxTop;
+      if (pinTop > PinPositionLimit.MAX_TOP) {
+        pinTop = PinPositionLimit.MAX_TOP;
       }
 
       setMainPinPos(pinLeft + 'px', pinTop + 'px');
@@ -100,16 +104,16 @@
   };
 
   var getMainPinCoordinates = function (isCenter) {
-    var x = Math.round(mainPin.offsetLeft + MAIN_PIN_WIDTH / 2);
+    var x = Math.round(mainPin.offsetLeft + MainPinSize.WIDTH / 2);
     var y;
 
     if (isCenter === undefined) {
       isCenter = false;
     }
     if (isCenter) {
-      y = Math.round(mainPin.offsetTop + MAIN_PIN_WIDTH / 2);
+      y = Math.round(mainPin.offsetTop + MainPinSize.WIDTH / 2);
     } else {
-      y = Math.round(mainPin.offsetTop + MAIN_PIN_HEIGHT);
+      y = Math.round(mainPin.offsetTop + MainPinSize.HEIGHT);
     }
 
     return {

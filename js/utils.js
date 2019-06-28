@@ -2,14 +2,14 @@
 
 (function () {
 
-  var KeyCodes = {
+  var KeyCode = {
     ESC: 27,
     ENTER: 13
   };
 
-  var Words = {
-    ROOM: ['комната', 'комнаты', 'комнат'],
-    GUEST_GENITIVE: ['гостя', 'гостей', 'гостей']
+  var wordsMap = {
+    'room': ['комната', 'комнаты', 'комнат'],
+    'guest-genitive': ['гостя', 'гостей', 'гостей']
   };
 
   window.utils = {
@@ -34,7 +34,7 @@
 
     numFormat: function (num, word) {
       var result = '';
-      if (!Words.hasOwnProperty(word)) {
+      if (!wordsMap.hasOwnProperty(word)) {
         return result;
       }
 
@@ -43,11 +43,11 @@
         count = count % 10;
       }
       if (count === 1) {
-        result = Words[word][0];
+        result = wordsMap[word][0];
       } else if (count >= 2 && count <= 4) {
-        result = Words[word][1];
+        result = wordsMap[word][1];
       } else {
-        result = Words[word][2];
+        result = wordsMap[word][2];
       }
 
       return result;
@@ -66,14 +66,14 @@
     },
 
     onEscPress: function (evt, cb) {
-      if (evt.keyCode === KeyCodes.ESC) {
+      if (evt.keyCode === KeyCode.ESC) {
         evt.preventDefault();
         cb();
       }
     },
 
     onEnterPress: function (evt, cb) {
-      if (evt.keyCode === KeyCodes.ENTER) {
+      if (evt.keyCode === KeyCode.ENTER) {
         cb();
       }
     }
