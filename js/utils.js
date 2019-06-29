@@ -2,6 +2,8 @@
 
 (function () {
 
+  var DEBOUNCE_INTERVAL = 500;
+
   var KeyCode = {
     ESC: 27,
     ENTER: 13
@@ -11,6 +13,8 @@
     'room': ['комната', 'комнаты', 'комнат'],
     'guest-genitive': ['гостя', 'гостей', 'гостей']
   };
+
+  var lastTimeout;
 
   window.utils = {
     getRandomArrayItem: function (array) {
@@ -76,6 +80,13 @@
       if (evt.keyCode === KeyCode.ENTER) {
         cb();
       }
+    },
+
+    debounce: function (cb) {
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(cb, DEBOUNCE_INTERVAL);
     }
   };
 
