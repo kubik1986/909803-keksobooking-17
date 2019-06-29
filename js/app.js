@@ -42,7 +42,7 @@
       moveEvt.preventDefault();
       if (!isPageActive) {
         activatePage();
-        window.backend.load(onOffersLoad, onOffersError);
+        window.backend.load(onAdsLoad, onAdsError);
       }
 
       var shift = {
@@ -90,17 +90,32 @@
     resetPage();
   };
 
-  var onOffersLoad = function (offers) {
-    window.data.offers = offers;
-    window.data.filterOffers();
-    window.map.renderPins(window.data.filteredOffers);
-    window.utils.activateFormFields(filtersFormFields);
+  var onFiltersFormChange = function (evt) {
+    window.data.updateFilterState(evt.target);
+    updatePins(evt);
   };
 
-  var onOffersError = function (errorText) {
+  var onAdsLoad = function (ads) {
+    window.data.ads = ads;
+    window.data.initAds();
+    window.map.renderPins(window.data.filteredAds);
+    window.utils.activateFormFields(filtersFormFields);
+
+    filtersForm.addEventListener('change', onFiltersFormChange);
+  };
+
+  var onAdsError = function (errorText) {
     window.alerts.showError('Не удалось загрузить похожие объявления.<br>' + errorText, function () {
-      window.backend.load(onOffersLoad, onOffersError);
+      window.backend.load(onAdsLoad, onAdsError);
     });
+  };
+
+  var updatePins = function (evt) {
+    window.map.closeCard();
+    window.map.clearPins();
+    window.data.filterAds();
+    window.map.renderPins(window.data.filteredAds);
+    evt.target.focus();
   };
 
   var getMainPinCoordinates = function (isCenter) {
@@ -145,6 +160,7 @@
       window.scrollTo(0, 0);
 
       adFormReset.removeEventListener('click', onAdFormResetClick);
+      filtersForm.removeEventListener('change', onFiltersFormChange);
     }
 
     window.map.deactivate();

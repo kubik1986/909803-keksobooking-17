@@ -38,7 +38,7 @@
   };
 
   var openCard = function (pinID) {
-    var card = window.card.create(window.data.filteredOffers[pinID]);
+    var card = window.card.create(window.data.filteredAds[pinID]);
     map.appendChild(card);
     isCardRendered = true;
 
@@ -64,11 +64,11 @@
       map.classList.add('map--faded');
     },
 
-    renderPins: function (offers) {
+    renderPins: function (ads) {
       var fragment = document.createDocumentFragment();
 
-      offers.forEach(function (offer, index) {
-        fragment.appendChild(window.pin.create(index, offer));
+      ads.forEach(function (ad, index) {
+        fragment.appendChild(window.pin.create(index, ad));
       });
       pinsBlock.appendChild(fragment);
 
