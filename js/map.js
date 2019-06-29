@@ -67,9 +67,9 @@
     renderPins: function (offers) {
       var fragment = document.createDocumentFragment();
 
-      for (var i = 0; i < offers.length; i++) {
-        fragment.appendChild(window.pin.create(i, offers[i]));
-      }
+      offers.forEach(function (offer, index) {
+        fragment.appendChild(window.pin.create(index, offer));
+      });
       pinsBlock.appendChild(fragment);
 
       pins = pinsBlock.querySelectorAll('.map__pin:not([class$="main"])');
@@ -79,12 +79,9 @@
     },
 
     clearPins: function () {
-      var last = pinsBlock.lastChild;
-
-      for (var i = 0; i < pins.length; i++) {
-        pinsBlock.removeChild(last);
-        last = pinsBlock.lastChild;
-      }
+      pins.forEach(function (pin) {
+        pin.remove();
+      });
       pins = [];
     },
 
