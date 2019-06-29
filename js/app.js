@@ -31,6 +31,13 @@
     MAX_TOP: LocationLimit.MAX_Y - MainPinSize.HEIGHT
   };
 
+  var ClientCoordinatesLimit = {
+    MIN_X: pinsBlock.getBoundingClientRect().left + MainPinSize.WIDTH / 2,
+    MAX_X: pinsBlock.getBoundingClientRect().left + pinsBlock.offsetWidth - MainPinSize.WIDTH / 2,
+    MIN_Y: pinsBlock.getBoundingClientRect().top + LocationLimit.MIN_Y - MainPinSize.HEIGHT / 2,
+    MAX_Y: pinsBlock.getBoundingClientRect().top + LocationLimit.MAX_Y - MainPinSize.HEIGHT / 2
+  };
+
   var onMainPinMousedown = function (evt) {
     evt.preventDefault();
 
@@ -61,15 +68,27 @@
 
       if (pinLeft < PinPositionLimit.MIN_LEFT) {
         pinLeft = PinPositionLimit.MIN_LEFT;
+        if (startCoords.x < ClientCoordinatesLimit.MIN_X - pageXOffset) {
+          startCoords.x = ClientCoordinatesLimit.MIN_X - pageXOffset;
+        }
       }
       if (pinLeft > PinPositionLimit.MAX_LEFT) {
         pinLeft = PinPositionLimit.MAX_LEFT;
+        if (startCoords.x > ClientCoordinatesLimit.MAX_X - pageXOffset) {
+          startCoords.x = ClientCoordinatesLimit.MAX_X - pageXOffset;
+        }
       }
       if (pinTop < PinPositionLimit.MIN_TOP) {
         pinTop = PinPositionLimit.MIN_TOP;
+        if (startCoords.y < ClientCoordinatesLimit.MIN_Y - pageYOffset) {
+          startCoords.y = ClientCoordinatesLimit.MIN_Y - pageYOffset;
+        }
       }
       if (pinTop > PinPositionLimit.MAX_TOP) {
         pinTop = PinPositionLimit.MAX_TOP;
+        if (startCoords.y > ClientCoordinatesLimit.MAX_Y - pageYOffset) {
+          startCoords.y = ClientCoordinatesLimit.MAX_Y - pageYOffset;
+        }
       }
 
       setMainPinPos(pinLeft + 'px', pinTop + 'px');
