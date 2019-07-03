@@ -15,13 +15,14 @@
   var isPageActive = false;
   var pinsBlock = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
-  var mainPinStartPos = {
-    left: mainPin.style.left,
-    top: mainPin.style.top
-  };
   var adFormReset = document.querySelector('.ad-form__reset');
   var filtersForm = document.querySelector('.map__filters');
   var filtersFormFields = filtersForm.querySelectorAll('select, fieldset');
+
+  var MainPinStartPos = {
+    LEFT: mainPin.style.left,
+    TOP: mainPin.style.top
+  };
 
   var PinPositionLimit = {
     MIN_LEFT: 0,
@@ -176,7 +177,7 @@
       window.map.closeCard();
       window.map.clearPins();
       filtersForm.reset();
-      setMainPinPos(mainPinStartPos.left, mainPinStartPos.top);
+      setMainPinPos(MainPinStartPos.LEFT, MainPinStartPos.TOP);
       window.scrollTo(0, 0);
 
       adFormReset.removeEventListener('click', onAdFormResetClick);
