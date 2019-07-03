@@ -22,7 +22,6 @@
   var adFormReset = document.querySelector('.ad-form__reset');
   var filtersForm = document.querySelector('.map__filters');
   var filtersFormFields = filtersForm.querySelectorAll('select, fieldset');
-  var currentFilter;
 
   var PinPositionLimit = {
     MIN_LEFT: 0,
@@ -112,7 +111,6 @@
 
   var onFiltersFormChange = function (evt) {
     window.data.updateFilterState(evt.target);
-    currentFilter = evt.target;
     window.utils.debounce(updatePins);
   };
 
@@ -132,11 +130,12 @@
   };
 
   var updatePins = function () {
+    var activeElement = document.activeElement;
     window.map.closeCard();
     window.map.clearPins();
     window.data.filterAds();
     window.map.renderPins(window.data.filteredAds);
-    currentFilter.focus();
+    activeElement.focus();
   };
 
   var getMainPinCoordinates = function (isCenter) {
