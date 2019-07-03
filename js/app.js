@@ -132,10 +132,10 @@
   var updatePins = function () {
     var activeElement = document.activeElement;
     window.map.closeCard();
+    activeElement.focus();
     window.map.clearPins();
     window.data.filterAds();
     window.map.renderPins(window.data.filteredAds);
-    activeElement.focus();
   };
 
   var getMainPinCoordinates = function (isCenter) {
