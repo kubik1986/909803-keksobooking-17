@@ -9,6 +9,13 @@
     ENTER: 13
   };
 
+  var PluralFormsChangingNumber = {
+    FIRST: 1,
+    SECOND: 2,
+    THIRD: 5,
+    REPEAT: 19
+  };
+
   var wordsMap = {
     'room': ['комната', 'комнаты', 'комнат'],
     'guest-genitive': ['гостя', 'гостей', 'гостей']
@@ -36,19 +43,19 @@
       return array;
     },
 
-    numFormat: function (num, word) {
+    pluralize: function (num, word) {
       var result = '';
       if (!wordsMap.hasOwnProperty(word)) {
         return result;
       }
 
       var count = num % 100;
-      if (count > 19) {
+      if (count > PluralFormsChangingNumber.REPEAT) {
         count = count % 10;
       }
-      if (count === 1) {
+      if (count === PluralFormsChangingNumber.FIRST) {
         result = wordsMap[word][0];
-      } else if (count >= 2 && count <= 4) {
+      } else if (count >= PluralFormsChangingNumber.SECOND && count < PluralFormsChangingNumber.THIRD) {
         result = wordsMap[word][1];
       } else {
         result = wordsMap[word][2];
