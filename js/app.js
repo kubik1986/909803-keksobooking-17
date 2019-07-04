@@ -2,28 +2,37 @@
 
 (function () {
 
-  var PIN_Y_MIN = 170;
-  var PIN_Y_MAX = 700;
+  var LocationLimit = {
+    MIN_Y: 170,
+    MAX_Y: 700
+  };
   // Диапазон значения координаты метки Y изменен умышленно по сравнению со значениями в ТЗ, которые не отображают реальное положение горизонта и панели фильтров
-  var MAIN_PIN_WIDTH = 65;
-  var MAIN_PIN_HEIGHT = 80;
+  var MainPinSize = {
+    WIDTH: 65,
+    HEIGHT: 80
+  };
 
   var isPageActive = false;
   var pinsBlock = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
-  var mainPinStartPos = {
-    left: mainPin.style.left,
-    top: mainPin.style.top
-  };
-  var adFormReset = document.querySelector('.ad-form__reset');
-  var filtersForm = document.querySelector('.map__filters');
-  var filtersFormFields = filtersForm.querySelectorAll('select, fieldset');
 
-  var PinPositionLimits = {
-    minLeft: 0,
-    maxLeft: pinsBlock.offsetWidth - MAIN_PIN_WIDTH,
-    minTop: PIN_Y_MIN - MAIN_PIN_HEIGHT,
-    maxTop: PIN_Y_MAX - MAIN_PIN_HEIGHT
+  var MainPinStartPos = {
+    LEFT: mainPin.style.left,
+    TOP: mainPin.style.top
+  };
+
+  var PinPositionLimit = {
+    MIN_LEFT: 0,
+    MAX_LEFT: pinsBlock.offsetWidth - MainPinSize.WIDTH,
+    MIN_TOP: LocationLimit.MIN_Y - MainPinSize.HEIGHT,
+    MAX_TOP: LocationLimit.MAX_Y - MainPinSize.HEIGHT
+  };
+
+  var ClientCoordinatesLimit = {
+    MIN_X: pinsBlock.getBoundingClientRect().left + MainPinSize.WIDTH / 2,
+    MAX_X: pinsBlock.getBoundingClientRect().left + pinsBlock.offsetWidth - MainPinSize.WIDTH / 2,
+    MIN_Y: pinsBlock.getBoundingClientRect().top + LocationLimit.MIN_Y - MainPinSize.HEIGHT / 2,
+    MAX_Y: pinsBlock.getBoundingClientRect().top + LocationLimit.MAX_Y - MainPinSize.HEIGHT / 2
   };
 
   var onMainPinMousedown = function (evt) {
@@ -38,7 +47,7 @@
       moveEvt.preventDefault();
       if (!isPageActive) {
         activatePage();
-        window.backend.load(onOffersLoad, onOffersError);
+        window.backend.load(onAdsLoad, onAdsError);
       }
 
       var shift = {
@@ -54,17 +63,29 @@
       var pinLeft = mainPin.offsetLeft - shift.x;
       var pinTop = mainPin.offsetTop - shift.y;
 
-      if (pinLeft < PinPositionLimits.minLeft) {
-        pinLeft = PinPositionLimits.minLeft;
+      if (pinLeft < PinPositionLimit.MIN_LEFT) {
+        pinLeft = PinPositionLimit.MIN_LEFT;
+        if (startCoords.x < ClientCoordinatesLimit.MIN_X - pageXOffset) {
+          startCoords.x = ClientCoordinatesLimit.MIN_X - pageXOffset;
+        }
       }
-      if (pinLeft > PinPositionLimits.maxLeft) {
-        pinLeft = PinPositionLimits.maxLeft;
+      if (pinLeft > PinPositionLimit.MAX_LEFT) {
+        pinLeft = PinPositionLimit.MAX_LEFT;
+        if (startCoords.x > ClientCoordinatesLimit.MAX_X - pageXOffset) {
+          startCoords.x = ClientCoordinatesLimit.MAX_X - pageXOffset;
+        }
       }
-      if (pinTop < PinPositionLimits.minTop) {
-        pinTop = PinPositionLimits.minTop;
+      if (pinTop < PinPositionLimit.MIN_TOP) {
+        pinTop = PinPositionLimit.MIN_TOP;
+        if (startCoords.y < ClientCoordinatesLimit.MIN_Y - pageYOffset) {
+          startCoords.y = ClientCoordinatesLimit.MIN_Y - pageYOffset;
+        }
       }
-      if (pinTop > PinPositionLimits.maxTop) {
-        pinTop = PinPositionLimits.maxTop;
+      if (pinTop > PinPositionLimit.MAX_TOP) {
+        pinTop = PinPositionLimit.MAX_TOP;
+        if (startCoords.y > ClientCoordinatesLimit.MAX_Y - pageYOffset) {
+          startCoords.y = ClientCoordinatesLimit.MAX_Y - pageYOffset;
+        }
       }
 
       setMainPinPos(pinLeft + 'px', pinTop + 'px');
@@ -81,35 +102,30 @@
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  var onAdFormResetClick = function (evt) {
-    evt.preventDefault();
-    resetPage();
+  var onAdsLoad = function (ads) {
+    window.data.ads = ads;
+    window.data.initAds();
+    window.map.renderPins(window.data.filteredAds);
+    window.filterForm.activate();
   };
 
-  var onOffersLoad = function (offers) {
-    window.data.offers = offers;
-    window.data.filterOffers();
-    window.map.renderPins(window.data.filteredOffers);
-    window.utils.activateFormFields(filtersFormFields);
-  };
-
-  var onOffersError = function (errorText) {
+  var onAdsError = function (errorText) {
     window.alerts.showError('Не удалось загрузить похожие объявления.<br>' + errorText, function () {
-      window.backend.load(onOffersLoad, onOffersError);
+      window.backend.load(onAdsLoad, onAdsError);
     });
   };
 
   var getMainPinCoordinates = function (isCenter) {
-    var x = Math.round(mainPin.offsetLeft + MAIN_PIN_WIDTH / 2);
+    var x = Math.round(mainPin.offsetLeft + MainPinSize.WIDTH / 2);
     var y;
 
     if (isCenter === undefined) {
       isCenter = false;
     }
     if (isCenter) {
-      y = Math.round(mainPin.offsetTop + MAIN_PIN_WIDTH / 2);
+      y = Math.round(mainPin.offsetTop + MainPinSize.WIDTH / 2);
     } else {
-      y = Math.round(mainPin.offsetTop + MAIN_PIN_HEIGHT);
+      y = Math.round(mainPin.offsetTop + MainPinSize.HEIGHT);
     }
 
     return {
@@ -127,31 +143,29 @@
     window.map.activate();
     window.adForm.activate();
 
-    adFormReset.addEventListener('click', onAdFormResetClick);
-
     isPageActive = true;
   };
 
-  var resetPage = function () {
-    if (isPageActive) {
-      window.map.clearPins();
-      filtersForm.reset();
-      setMainPinPos(mainPinStartPos.left, mainPinStartPos.top);
-      window.scrollTo(0, 0);
+  var initPage = function () {
+    window.resetPage();
+    mainPin.addEventListener('mousedown', onMainPinMousedown);
+    window.filterForm.init();
+  };
 
-      adFormReset.removeEventListener('click', onAdFormResetClick);
+  window.resetPage = function () {
+    if (isPageActive) {
+      window.map.closeCard();
+      window.map.clearPins();
+      setMainPinPos(MainPinStartPos.LEFT, MainPinStartPos.TOP);
+      window.scrollTo(0, 0);
     }
 
     window.map.deactivate();
+    window.filterForm.deactivate();
     window.adForm.deactivate();
     window.adForm.setAddress(getMainPinCoordinates(true));
-    window.utils.deactivateFormFields(filtersFormFields);
-    isPageActive = false;
-  };
 
-  var initPage = function () {
-    resetPage();
-    mainPin.addEventListener('mousedown', onMainPinMousedown);
+    isPageActive = false;
   };
 
   initPage();

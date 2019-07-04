@@ -2,15 +2,26 @@
 
 (function () {
 
-  var KeyCodes = {
+  var DEBOUNCE_INTERVAL = 500;
+
+  var KeyCode = {
     ESC: 27,
     ENTER: 13
   };
 
-  var Words = {
-    ROOM: ['комната', 'комнаты', 'комнат'],
-    GUEST_GENITIVE: ['гостя', 'гостей', 'гостей']
+  var PluralFormsChangingNumber = {
+    FIRST: 1,
+    SECOND: 2,
+    THIRD: 5,
+    REPEAT: 19
   };
+
+  var wordsMap = {
+    'room': ['комната', 'комнаты', 'комнат'],
+    'guest-genitive': ['гостя', 'гостей', 'гостей']
+  };
+
+  var lastTimeout;
 
   window.utils = {
     getRandomArrayItem: function (array) {
@@ -32,22 +43,22 @@
       return array;
     },
 
-    numFormat: function (num, word) {
+    pluralize: function (num, word) {
       var result = '';
-      if (!Words.hasOwnProperty(word)) {
+      if (!wordsMap.hasOwnProperty(word)) {
         return result;
       }
 
       var count = num % 100;
-      if (count > 19) {
+      if (count > PluralFormsChangingNumber.REPEAT) {
         count = count % 10;
       }
-      if (count === 1) {
-        result = Words[word][0];
-      } else if (count >= 2 && count <= 4) {
-        result = Words[word][1];
+      if (count === PluralFormsChangingNumber.FIRST) {
+        result = wordsMap[word][0];
+      } else if (count >= PluralFormsChangingNumber.SECOND && count < PluralFormsChangingNumber.THIRD) {
+        result = wordsMap[word][1];
       } else {
-        result = Words[word][2];
+        result = wordsMap[word][2];
       }
 
       return result;
@@ -66,16 +77,23 @@
     },
 
     onEscPress: function (evt, cb) {
-      if (evt.keyCode === KeyCodes.ESC) {
+      if (evt.keyCode === KeyCode.ESC) {
         evt.preventDefault();
         cb();
       }
     },
 
     onEnterPress: function (evt, cb) {
-      if (evt.keyCode === KeyCodes.ENTER) {
+      if (evt.keyCode === KeyCode.ENTER) {
         cb();
       }
+    },
+
+    debounce: function (cb) {
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(cb, DEBOUNCE_INTERVAL);
     }
   };
 

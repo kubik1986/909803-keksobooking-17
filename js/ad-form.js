@@ -11,18 +11,43 @@
   var timeoutSelect = form.querySelector('#timeout');
   var roomNumberSelect = form.querySelector('#room_number');
   var capacitySelect = form.querySelector('#capacity');
+  var formReset = form.querySelector('.ad-form__reset');
   var isFormActive = false;
 
-  var OffersMinPrices = {
+  var offerMinPricesMap = {
     'bungalo': 0,
     'flat': 1000,
     'house': 5000,
     'palace': 10000
   };
 
+  var onFormResetClick = function (evt) {
+    evt.preventDefault();
+    window.resetPage();
+  };
+
+  var onFormChange = function (evt) {
+    var target = evt.target;
+
+    switch (target.id) {
+      case 'type':
+        setPrice(target.value);
+        break;
+      case 'timein':
+      case 'timeout':
+        setTimes(target.value);
+        break;
+      case 'room_number':
+        setCapacity(target.value);
+        break;
+      case 'capacity':
+        setCapacityValidity();
+    }
+  };
+
   var setPrice = function (value) {
-    priceInput.min = OffersMinPrices[value];
-    priceInput.placeholder = OffersMinPrices[value];
+    priceInput.min = offerMinPricesMap[value];
+    priceInput.placeholder = offerMinPricesMap[value];
   };
 
   var setTimes = function (value) {
@@ -55,25 +80,6 @@
     }
   };
 
-  var onFormChange = function (evt) {
-    var target = evt.target;
-
-    switch (target.id) {
-      case 'type':
-        setPrice(target.value);
-        break;
-      case 'timein':
-      case 'timeout':
-        setTimes(target.value);
-        break;
-      case 'room_number':
-        setCapacity(target.value);
-        break;
-      case 'capacity':
-        setCapacityValidity();
-    }
-  };
-
   window.adForm = {
     activate: function () {
       form.classList.remove('ad-form--disabled');
@@ -84,6 +90,7 @@
       window.utils.activateFormFields(formFields);
 
       form.addEventListener('change', onFormChange);
+      formReset.addEventListener('click', onFormResetClick);
 
       isFormActive = true;
     },
@@ -94,7 +101,9 @@
 
       if (isFormActive) {
         form.reset();
+
         form.removeEventListener('change', onFormChange);
+        formReset.removeEventListener('click', onFormResetClick);
       }
 
       isFormActive = false;
