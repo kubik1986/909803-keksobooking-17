@@ -149,6 +149,7 @@
   var initPage = function () {
     window.resetPage();
     mainPin.addEventListener('mousedown', onMainPinMousedown);
+    window.filterForm.init();
   };
 
   window.resetPage = function () {

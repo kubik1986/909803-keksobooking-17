@@ -9,23 +9,27 @@
     HIGH: 50000
   };
 
-  var checkPrice = function (ad, priceLevel) {
+  var checkPrice = function (offer, priceLevel) {
     switch (priceLevel) {
       case 'low':
-        return ad.offer.price < PriceLevel.LOW;
+        return offer.price < PriceLevel.LOW;
       case 'middle':
-        return (ad.offer.price >= PriceLevel.LOW && ad.offer.price <= PriceLevel.HIGH);
+        return (offer.price >= PriceLevel.LOW && offer.price <= PriceLevel.HIGH);
       case 'high':
-        return ad.offer.price > PriceLevel.HIGH;
+        return offer.price > PriceLevel.HIGH;
       default:
         return true;
     }
   };
 
-  var checkFeatures = function (ad) {
-    return window.filterForm.checkedFeatures.every(function (feature) {
-      return ad.offer.features.includes(feature);
+  var checkFeatures = function (offer, checkedFeatures) {
+    return checkedFeatures.every(function (feature) {
+      return offer.features.includes(feature);
     });
+  };
+
+  var checkSimpleProperty = function (offerValue, filterValue) {
+    return filterValue === window.filterForm.DEFAULT_SELECT_VALUE || filterValue === offerValue.toString();
   };
 
   window.data = {
@@ -48,11 +52,11 @@
           for (var key in filterState) {
             if (filterState.hasOwnProperty(key)) {
               if (key === 'price') {
-                isProperAd = checkPrice(ad, filterState[key]);
+                isProperAd = checkPrice(ad.offer, filterState[key]);
               } else if (key === 'features') {
-                isProperAd = checkFeatures(ad);
+                isProperAd = checkFeatures(ad.offer, filterState[key]);
               } else {
-                isProperAd = filterState[key] === ad.offer[key].toString();
+                isProperAd = checkSimpleProperty(ad.offer[key], filterState[key]);
               }
 
               if (!isProperAd) {
