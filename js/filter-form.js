@@ -60,7 +60,7 @@
           if (feature.checked) {
             value.push(feature.value);
           } else {
-            value.splice(value.indexOf(feature), 1);
+            value.splice(value.indexOf(feature.value), 1);
           }
           onFormChange(key, value);
         });
