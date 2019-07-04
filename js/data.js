@@ -9,17 +9,6 @@
     HIGH: 50000
   };
 
-  var filtersNameMap = {
-    'housing-type': 'type',
-    'housing-price': 'price',
-    'housing-rooms': 'rooms',
-    'housing-guests': 'guests',
-    'features': 'features'
-  };
-
-  var filterState;
-  var checkedFeatures;
-
   var checkPrice = function (ad, priceLevel) {
     switch (priceLevel) {
       case 'low':
@@ -34,7 +23,7 @@
   };
 
   var checkFeatures = function (ad) {
-    return checkedFeatures.every(function (feature) {
+    return window.filterForm.checkedFeatures.every(function (feature) {
       return ad.offer.features.includes(feature);
     });
   };
@@ -44,8 +33,6 @@
     filteredAds: [],
 
     initAds: function () {
-      filterState = {};
-      checkedFeatures = [];
       this.ads = this.ads.filter(function (ad) {
         return ad.hasOwnProperty('offer');
       });
@@ -53,26 +40,8 @@
       this.filteredAds = shuffledAds.slice(0, ADS_AMOUNT);
     },
 
-    updateFilterState: function (target) {
-      var filterName = filtersNameMap[target.name];
-      if (filterState.hasOwnProperty(filterName) && target.value === 'any') {
-        delete filterState[filterName];
-      } else if (target.classList.contains('map__filter')) {
-        filterState[filterName] = target.value;
-      } else if (target.checked) {
-        checkedFeatures.push(target.value);
-        filterState[filterName] = checkedFeatures;
-      } else {
-        checkedFeatures.splice(checkedFeatures.indexOf(target.value), 1);
-        if (checkedFeatures.length === 0) {
-          delete filterState[filterName];
-        } else {
-          filterState[filterName] = checkedFeatures;
-        }
-      }
-    },
-
     filterAds: function () {
+      var filterState = window.filterForm.state;
       this.filteredAds = this.ads
         .filter(function (ad) {
           var isProperAd = true;

@@ -15,9 +15,6 @@
   var isPageActive = false;
   var pinsBlock = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
-  var adFormReset = document.querySelector('.ad-form__reset');
-  var filtersForm = document.querySelector('.map__filters');
-  var filtersFormFields = filtersForm.querySelectorAll('select, fieldset');
 
   var MainPinStartPos = {
     LEFT: mainPin.style.left,
@@ -105,38 +102,17 @@
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  var onAdFormResetClick = function (evt) {
-    evt.preventDefault();
-    resetPage();
-  };
-
-  var onFiltersFormChange = function (evt) {
-    window.data.updateFilterState(evt.target);
-    window.utils.debounce(updatePins);
-  };
-
   var onAdsLoad = function (ads) {
     window.data.ads = ads;
     window.data.initAds();
     window.map.renderPins(window.data.filteredAds);
-    window.utils.activateFormFields(filtersFormFields);
-
-    filtersForm.addEventListener('change', onFiltersFormChange);
+    window.filterForm.activate();
   };
 
   var onAdsError = function (errorText) {
     window.alerts.showError('Не удалось загрузить похожие объявления.<br>' + errorText, function () {
       window.backend.load(onAdsLoad, onAdsError);
     });
-  };
-
-  var updatePins = function () {
-    var activeElement = document.activeElement;
-    window.map.closeCard();
-    activeElement.focus();
-    window.map.clearPins();
-    window.data.filterAds();
-    window.map.renderPins(window.data.filteredAds);
   };
 
   var getMainPinCoordinates = function (isCenter) {
@@ -167,33 +143,28 @@
     window.map.activate();
     window.adForm.activate();
 
-    adFormReset.addEventListener('click', onAdFormResetClick);
-
     isPageActive = true;
   };
 
-  var resetPage = function () {
+  var initPage = function () {
+    window.resetPage();
+    mainPin.addEventListener('mousedown', onMainPinMousedown);
+  };
+
+  window.resetPage = function () {
     if (isPageActive) {
       window.map.closeCard();
       window.map.clearPins();
-      filtersForm.reset();
       setMainPinPos(MainPinStartPos.LEFT, MainPinStartPos.TOP);
       window.scrollTo(0, 0);
-
-      adFormReset.removeEventListener('click', onAdFormResetClick);
-      filtersForm.removeEventListener('change', onFiltersFormChange);
     }
 
     window.map.deactivate();
+    window.filterForm.deactivate();
     window.adForm.deactivate();
     window.adForm.setAddress(getMainPinCoordinates(true));
-    window.utils.deactivateFormFields(filtersFormFields);
-    isPageActive = false;
-  };
 
-  var initPage = function () {
-    resetPage();
-    mainPin.addEventListener('mousedown', onMainPinMousedown);
+    isPageActive = false;
   };
 
   initPage();
