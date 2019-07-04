@@ -11,8 +11,10 @@
 
   var filtersNameMap = {
     'housing-type': 'type',
+    'housing-price': 'price',
     'housing-rooms': 'rooms',
-    'housing-guests': 'guests'
+    'housing-guests': 'guests',
+    'features': 'features'
   };
 
   var filterState;
@@ -51,20 +53,21 @@
       this.filteredAds = shuffledAds.slice(0, ADS_AMOUNT);
     },
 
-    updateFilterState: function (filter) {
-      if (filterState.hasOwnProperty(filter.name) && filter.value === 'any') {
-        delete filterState[filter.name];
-      } else if (filter.classList.contains('map__filter')) {
-        filterState[filter.name] = filter.value;
-      } else if (filter.checked) {
-        checkedFeatures.push(filter.value);
-        filterState[filter.name] = checkedFeatures;
+    updateFilterState: function (target) {
+      var filterName = filtersNameMap[target.name];
+      if (filterState.hasOwnProperty(filterName) && target.value === 'any') {
+        delete filterState[filterName];
+      } else if (target.classList.contains('map__filter')) {
+        filterState[filterName] = target.value;
+      } else if (target.checked) {
+        checkedFeatures.push(target.value);
+        filterState[filterName] = checkedFeatures;
       } else {
-        checkedFeatures.splice(checkedFeatures.indexOf(filter.value), 1);
+        checkedFeatures.splice(checkedFeatures.indexOf(target.value), 1);
         if (checkedFeatures.length === 0) {
-          delete filterState[filter.name];
+          delete filterState[filterName];
         } else {
-          filterState[filter.name] = checkedFeatures;
+          filterState[filterName] = checkedFeatures;
         }
       }
     },
@@ -73,14 +76,14 @@
       this.filteredAds = this.ads
         .filter(function (ad) {
           var isProperAd = true;
-          for (var filter in filterState) {
-            if (filterState.hasOwnProperty(filter)) {
-              if (filter === 'housing-price') {
-                isProperAd = checkPrice(ad, filterState[filter]);
-              } else if (filter === 'features') {
+          for (var key in filterState) {
+            if (filterState.hasOwnProperty(key)) {
+              if (key === 'price') {
+                isProperAd = checkPrice(ad, filterState[key]);
+              } else if (key === 'features') {
                 isProperAd = checkFeatures(ad);
               } else {
-                isProperAd = filterState[filter] === ad.offer[filtersNameMap[filter]].toString();
+                isProperAd = filterState[key] === ad.offer[key].toString();
               }
 
               if (!isProperAd) {
