@@ -15,7 +15,7 @@
   var formReset = form.querySelector('.ad-form__reset');
   var formSubmit = form.querySelector('.ad-form__submit');
   var isFormActive = false;
-  var isValidateError = false;
+  var isValidationError = false;
 
   var offerMinPricesMap = {
     'bungalo': 0,
@@ -35,6 +35,9 @@
     switch (target.id) {
       case 'type':
         setPrice(target.value);
+        if (checkValidationError(priceInput)) {
+          validate(priceInput);
+        }
         break;
       case 'timein':
       case 'timeout':
@@ -42,26 +45,25 @@
         break;
       case 'room_number':
         setCapacity(target.value);
+        if (checkValidationError(capacitySelect)) {
+          validate(capacitySelect);
+        }
         break;
       case 'capacity':
         setCapacityValidity();
+        if (checkValidationError(capacitySelect)) {
+          validate(capacitySelect);
+        }
     }
   };
 
   var onFormSubmitClick = function (evt) {
     evt.preventDefault();
-    var errors = form.querySelectorAll('.error-message');
-    errors.forEach(function (error) {
-      error.remove();
-    });
-
-    isValidateError = false;
-
+    isValidationError = false;
     validatingFields.forEach(function (field) {
       validate(field);
     });
-
-    if (!isValidateError) {
+    if (!isValidationError) {
       formSubmit.disabled = true;
       window.backend.save(new FormData(form), onSubmitSuccess, onSubmitError);
     }
@@ -79,6 +81,12 @@
       window.backend.save(new FormData(form), onSubmitSuccess, onSubmitError);
     });
     formSubmit.disabled = false;
+  };
+
+  var onInvalidFieldChange = function (evt) {
+    if (evt.target !== capacitySelect) {
+      validate(evt.target);
+    }
   };
 
   var setPrice = function (value) {
@@ -116,10 +124,20 @@
     }
   };
 
+  var checkValidationError = function (field) {
+    return field.nextElementSibling !== null && field.nextElementSibling.classList.contains('error-message');
+  };
+
   var validate = function (field) {
+    var isError = checkValidationError(field);
+    if (isError) {
+      field.removeEventListener('change', onInvalidFieldChange);
+      clearValidationError(field);
+    }
     if (!field.validity.valid) {
-      if (!isValidateError) {
+      if (!isValidationError) {
         field.focus();
+        isValidationError = true;
       }
       field.style.outline = '2px dashed red';
 
@@ -127,10 +145,27 @@
       fieldCustomValidation.checkValidity(field);
       var customValidityMessageForHTML = fieldCustomValidation.getInvaliditiesForHTML();
       field.insertAdjacentHTML('afterend', '<p class="error-message" style="margin-top: 7px; margin-bottom: 15px; padding-right: 20px; color: red;">' + customValidityMessageForHTML + '</p>');
-      isValidateError = true;
-    } else {
-      field.style.outline = null;
+
+      field.addEventListener('change', onInvalidFieldChange);
     }
+  };
+
+  var clearValidationError = function (field) {
+    var error = field.nextElementSibling;
+
+    field.style.outline = null;
+    error.remove();
+  };
+
+  var clearValidationErrors = function () {
+    var errors = form.querySelectorAll('.error-message');
+
+    errors.forEach(function (error) {
+      var field = error.previousElementSibling;
+
+      field.removeEventListener('change', onInvalidFieldChange);
+      clearValidationError(field);
+    });
   };
 
   window.adForm = {
@@ -154,6 +189,9 @@
 
       if (isFormActive) {
         form.reset();
+        if (isValidationError) {
+          clearValidationErrors();
+        }
 
         form.removeEventListener('change', onFormChange);
         formSubmit.removeEventListener('click', onFormSubmitClick);
