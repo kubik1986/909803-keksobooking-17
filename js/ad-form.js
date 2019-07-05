@@ -5,15 +5,20 @@
   var form = document.querySelector('.ad-form');
   var formFields = form.querySelectorAll('fieldset');
   var addressInput = form.querySelector('#address');
+  var titleInput = form.querySelector('#title');
   var typeInput = form.querySelector('#type');
   var priceInput = form.querySelector('#price');
   var timeinSelect = form.querySelector('#timein');
   var timeoutSelect = form.querySelector('#timeout');
   var roomNumberSelect = form.querySelector('#room_number');
   var capacitySelect = form.querySelector('#capacity');
-  var validatingFields = form.querySelectorAll('input, select, textarea');
   var formReset = form.querySelector('.ad-form__reset');
   var formSubmit = form.querySelector('.ad-form__submit');
+  var validatingFields = [
+    titleInput,
+    priceInput,
+    capacitySelect
+  ];
   var isFormActive = false;
   var isValidationError = false;
 
@@ -33,11 +38,15 @@
     var target = evt.target;
 
     switch (target.id) {
+      case 'title':
+        validate(titleInput);
+        break;
       case 'type':
         setPrice(target.value);
-        if (checkValidationError(priceInput)) {
-          validate(priceInput);
-        }
+        validate(priceInput);
+        break;
+      case 'price':
+        validate(priceInput);
         break;
       case 'timein':
       case 'timeout':
@@ -45,15 +54,11 @@
         break;
       case 'room_number':
         setCapacity(target.value);
-        if (checkValidationError(capacitySelect)) {
-          validate(capacitySelect);
-        }
+        validate(capacitySelect);
         break;
       case 'capacity':
         setCapacityValidity();
-        if (checkValidationError(capacitySelect)) {
-          validate(capacitySelect);
-        }
+        validate(capacitySelect);
     }
   };
 
@@ -81,12 +86,6 @@
       window.backend.save(new FormData(form), onSubmitSuccess, onSubmitError);
     });
     formSubmit.disabled = false;
-  };
-
-  var onInvalidFieldChange = function (evt) {
-    if (evt.target !== capacitySelect) {
-      validate(evt.target);
-    }
   };
 
   var setPrice = function (value) {
@@ -131,7 +130,6 @@
   var validate = function (field) {
     var isError = checkValidationError(field);
     if (isError) {
-      field.removeEventListener('change', onInvalidFieldChange);
       clearValidationError(field);
     }
     if (!field.validity.valid) {
@@ -145,8 +143,6 @@
       fieldCustomValidation.checkValidity(field);
       var customValidityMessageForHTML = fieldCustomValidation.getInvaliditiesForHTML();
       field.insertAdjacentHTML('afterend', '<p class="error-message" style="margin-top: 7px; margin-bottom: 15px; padding-right: 20px; color: red;">' + customValidityMessageForHTML + '</p>');
-
-      field.addEventListener('change', onInvalidFieldChange);
     }
   };
 
@@ -163,7 +159,6 @@
     errors.forEach(function (error) {
       var field = error.previousElementSibling;
 
-      field.removeEventListener('change', onInvalidFieldChange);
       clearValidationError(field);
     });
   };
