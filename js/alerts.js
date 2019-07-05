@@ -44,6 +44,7 @@
 
       errorElement.querySelector('.error__message').innerHTML = errorMessage;
       main.appendChild(errorElement);
+      errorElement.focus();
 
       errorBtn.addEventListener('click', onErrorBtnClick);
       errorElement.addEventListener('click', onErrorClick);
@@ -55,6 +56,7 @@
 
       successElement.querySelector('.success__message').innerHTML = successMessage;
       main.appendChild(successElement);
+      successElement.focus();
 
       successElement.addEventListener('click', onSuccessClick);
       document.addEventListener('keydown', onAlertEscPress);

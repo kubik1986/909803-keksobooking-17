@@ -173,7 +173,7 @@
           <label class="ad-form__label">Фотографии жилья</label>
           <div class="ad-form__photo-container">
             <div class="ad-form__upload">
-              <input type="file" id="images" name="images" class="ad-form__input visually-hidden">
+              <input type="file" id="images" name="images" class="ad-form__input visually-hidden" multiple="multiple">
               <label for="images" class="ad-form__drop-zone">Загрузите или&nbsp;перетащите сюда фото</label>
             </div>
             <div class="ad-form__photo"></div>
@@ -235,20 +235,21 @@
 
   <!-- Сообщение об успешном создании объявления -->
   <template id="success">
-    <div class="success">
+    <div class="success" tabindex="0">
       <p class="success__message">Ваше объявление<br>успешно размещено!</p>
     </div>
   </template>
 
   <!-- Сообщение об ошибке создания объявления -->
   <template id="error">
-    <div class="error">
+    <div class="error" tabindex="0">
       <p class="error__message">Ошибка загрузки объявления</p>
       <button class="error__button">Попробовать снова</button>
     </div>
   </template>
 
   <script src="js/utils.js"></script>
+  <script src="js/custom-validation.js"></script>
   <script src="js/alerts.js"></script>
   <script src="js/backend.js"></script>
   <script src="js/filter-form.js"></script>

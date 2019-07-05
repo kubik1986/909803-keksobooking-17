@@ -4,7 +4,7 @@
 
   var URL_POST = 'https://js.dump.academy/keksobooking';
   var URL_GET = URL_POST + '/data';
-  var TIMEOUT = 3000;
+  var TIMEOUT = 5000;
 
   var xhrSetup = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();

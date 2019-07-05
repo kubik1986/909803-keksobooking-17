@@ -11,8 +11,11 @@
   var timeoutSelect = form.querySelector('#timeout');
   var roomNumberSelect = form.querySelector('#room_number');
   var capacitySelect = form.querySelector('#capacity');
+  var validatingFields = form.querySelectorAll('input, select, textarea');
   var formReset = form.querySelector('.ad-form__reset');
+  var formSubmit = form.querySelector('.ad-form__submit');
   var isFormActive = false;
+  var isValidationError = false;
 
   var offerMinPricesMap = {
     'bungalo': 0,
@@ -32,6 +35,9 @@
     switch (target.id) {
       case 'type':
         setPrice(target.value);
+        if (checkValidationError(priceInput)) {
+          validate(priceInput);
+        }
         break;
       case 'timein':
       case 'timeout':
@@ -39,9 +45,47 @@
         break;
       case 'room_number':
         setCapacity(target.value);
+        if (checkValidationError(capacitySelect)) {
+          validate(capacitySelect);
+        }
         break;
       case 'capacity':
         setCapacityValidity();
+        if (checkValidationError(capacitySelect)) {
+          validate(capacitySelect);
+        }
+    }
+  };
+
+  var onFormSubmitClick = function (evt) {
+    evt.preventDefault();
+    isValidationError = false;
+    validatingFields.forEach(function (field) {
+      validate(field);
+    });
+    if (!isValidationError) {
+      formSubmit.disabled = true;
+      window.backend.save(new FormData(form), onSubmitSuccess, onSubmitError);
+    }
+  };
+
+  var onSubmitSuccess = function () {
+    window.alerts.showSuccess('Ваше объявление<br>успешно размещено!');
+    window.resetPage();
+    formSubmit.disabled = false;
+  };
+
+  var onSubmitError = function (errorText) {
+    window.alerts.showError('Ваше объявление не размещено.<br>' + errorText, function () {
+      formSubmit.disabled = true;
+      window.backend.save(new FormData(form), onSubmitSuccess, onSubmitError);
+    });
+    formSubmit.disabled = false;
+  };
+
+  var onInvalidFieldChange = function (evt) {
+    if (evt.target !== capacitySelect) {
+      validate(evt.target);
     }
   };
 
@@ -80,16 +124,60 @@
     }
   };
 
+  var checkValidationError = function (field) {
+    return field.nextElementSibling !== null && field.nextElementSibling.classList.contains('error-message');
+  };
+
+  var validate = function (field) {
+    var isError = checkValidationError(field);
+    if (isError) {
+      field.removeEventListener('change', onInvalidFieldChange);
+      clearValidationError(field);
+    }
+    if (!field.validity.valid) {
+      if (!isValidationError) {
+        field.focus();
+        isValidationError = true;
+      }
+      field.style.outline = '2px dashed red';
+
+      var fieldCustomValidation = new window.CustomValidation();
+      fieldCustomValidation.checkValidity(field);
+      var customValidityMessageForHTML = fieldCustomValidation.getInvaliditiesForHTML();
+      field.insertAdjacentHTML('afterend', '<p class="error-message" style="margin-top: 7px; margin-bottom: 15px; padding-right: 20px; color: red;">' + customValidityMessageForHTML + '</p>');
+
+      field.addEventListener('change', onInvalidFieldChange);
+    }
+  };
+
+  var clearValidationError = function (field) {
+    var error = field.nextElementSibling;
+
+    field.style.outline = null;
+    error.remove();
+  };
+
+  var clearValidationErrors = function () {
+    var errors = form.querySelectorAll('.error-message');
+
+    errors.forEach(function (error) {
+      var field = error.previousElementSibling;
+
+      field.removeEventListener('change', onInvalidFieldChange);
+      clearValidationError(field);
+    });
+  };
+
   window.adForm = {
     activate: function () {
       form.classList.remove('ad-form--disabled');
       setPrice(typeInput.value);
       setTimes(timeinSelect.value);
       setCapacity(roomNumberSelect.value);
-      setCapacityValidity();
       window.utils.activateFormFields(formFields);
 
       form.addEventListener('change', onFormChange);
+      formSubmit.addEventListener('click', onFormSubmitClick);
       formReset.addEventListener('click', onFormResetClick);
 
       isFormActive = true;
@@ -101,8 +189,12 @@
 
       if (isFormActive) {
         form.reset();
+        if (isValidationError) {
+          clearValidationErrors();
+        }
 
         form.removeEventListener('change', onFormChange);
+        formSubmit.removeEventListener('click', onFormSubmitClick);
         formReset.removeEventListener('click', onFormResetClick);
       }
 
