@@ -171,14 +171,14 @@
       var fragment = document.createDocumentFragment();
 
       ads.forEach(function (ad, index) {
-        fragment.appendChild(window.pin.create(index, ad));
+        var pinElement = window.pin.create(index, ad);
+
+        fragment.appendChild(pinElement);
+        pins.push(pinElement);
+
+        pinElement.addEventListener('click', onPinClick);
       });
       pinsBlock.appendChild(fragment);
-
-      pins = pinsBlock.querySelectorAll('.map__pin:not([class$="main"])');
-      pins.forEach(function (pin) {
-        pin.addEventListener('click', onPinClick);
-      });
     },
 
     clearPins: function () {
