@@ -31,7 +31,7 @@
 
   var onFormResetClick = function (evt) {
     evt.preventDefault();
-    window.resetPage();
+    window.app.resetPage();
   };
 
   var onFormChange = function (evt) {
@@ -43,7 +43,9 @@
         break;
       case 'type':
         setPrice(target.value);
-        validate(priceInput);
+        if (priceInput.value) {
+          validate(priceInput);
+        }
         break;
       case 'price':
         validate(priceInput);
@@ -76,7 +78,7 @@
 
   var onSubmitSuccess = function () {
     window.alerts.showSuccess('Ваше объявление<br>успешно размещено!');
-    window.resetPage();
+    window.app.resetPage();
     formSubmit.disabled = false;
   };
 

@@ -10,6 +10,10 @@
     checkValidity: function (input) {
       var validity = input.validity;
 
+      if (validity.badInput) {
+        this.addInvalidity('Неверное значение');
+      }
+
       if (validity.patternMismatch) {
         this.addInvalidity('Значение не соответствует указанному шаблону');
       }
