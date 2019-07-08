@@ -35,12 +35,12 @@
 
       if (validity.tooLong) {
         var maxlength = input.getAttribute('maxlength');
-        this.addInvalidity('Максимальное количество символов: ' + maxlength);
+        this.addInvalidity('Максимальное количество символов: ' + maxlength + '. Длина текста сейчас: ' + input.value.length);
       }
 
       if (validity.tooShort) {
         var minlength = input.getAttribute('minlength');
-        this.addInvalidity('Минимальное количество символов: ' + minlength);
+        this.addInvalidity('Минимальное количество символов: ' + minlength + '. Длина текста сейчас: ' + input.value.length);
       }
 
       if (validity.valueMissing) {

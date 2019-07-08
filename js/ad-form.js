@@ -2,6 +2,13 @@
 
 (function () {
 
+  var VALIDATION_ERROR_CLASS = 'js-error-message';
+
+  var TitleLengthLimit = {
+    MIN: 30,
+    MAX: 100
+  };
+
   var form = document.querySelector('.ad-form');
   var formFields = form.querySelectorAll('fieldset');
   var addressInput = form.querySelector('#address');
@@ -39,6 +46,7 @@
 
     switch (target.id) {
       case 'title':
+        setTitleValidity();
         validate(titleInput);
         break;
       case 'type':
@@ -90,6 +98,19 @@
     formSubmit.disabled = false;
   };
 
+  var setTitleValidity = function () {
+    titleInput.value = titleInput.value.trim();
+    var length = titleInput.value.length;
+
+    if (length < TitleLengthLimit.MIN && length > 0) {
+      titleInput.setCustomValidity('Минимальное количество символов: ' + TitleLengthLimit.MIN + '. Длина текста сейчас: ' + length);
+    } else if (length > TitleLengthLimit.MAX) {
+      titleInput.setCustomValidity('Максимальное количество символов: ' + TitleLengthLimit.MAX + '. Длина текста сейчас: ' + length);
+    } else {
+      titleInput.setCustomValidity('');
+    }
+  };
+
   var setPrice = function (value) {
     priceInput.min = offerMinPricesMap[value];
     priceInput.placeholder = offerMinPricesMap[value];
@@ -126,7 +147,7 @@
   };
 
   var checkValidationError = function (field) {
-    return field.nextElementSibling !== null && field.nextElementSibling.classList.contains('error-message');
+    return field.nextElementSibling !== null && field.nextElementSibling.classList.contains(VALIDATION_ERROR_CLASS);
   };
 
   var validate = function (field) {
@@ -144,7 +165,7 @@
       var fieldCustomValidation = new window.CustomValidation();
       fieldCustomValidation.checkValidity(field);
       var customValidityMessageForHTML = fieldCustomValidation.getInvaliditiesForHTML();
-      field.insertAdjacentHTML('afterend', '<p class="error-message" style="margin-top: 7px; margin-bottom: 15px; padding-right: 20px; color: red;">' + customValidityMessageForHTML + '</p>');
+      field.insertAdjacentHTML('afterend', '<p class="' + VALIDATION_ERROR_CLASS + '" style="margin-top: 7px; margin-bottom: 15px; padding-right: 20px; color: red;">' + customValidityMessageForHTML + '</p>');
     }
   };
 
@@ -156,7 +177,7 @@
   };
 
   var clearValidationErrors = function () {
-    var errors = form.querySelectorAll('.error-message');
+    var errors = form.querySelectorAll('.' + VALIDATION_ERROR_CLASS);
 
     errors.forEach(function (error) {
       var field = error.previousElementSibling;
