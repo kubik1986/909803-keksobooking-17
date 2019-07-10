@@ -1250,3 +1250,51 @@ fieldset {
   outline: none;
   opacity: 0.6;
 }
+
+/**
+ * Спиннер
+ */
+
+.spinner {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 1000;
+
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+
+  border: 18px solid rgb(255, 86, 53);
+  border-radius: 50%;
+  border-top: 18px solid transparent;
+
+  -webkit-animation: spin 2s linear infinite;
+          animation: spin 2s linear infinite;
+
+  -webkit-box-shadow: inset 0 0 5px 10px white;
+          box-shadow: inset 0 0 5px 10px white;
+}
+
+.spinner--hidden {
+  display: none;
+}
+
+.spinner img {
+  position: absolute;
+  left: 50%;
+  bottom: 105%;
+
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}

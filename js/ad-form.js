@@ -117,23 +117,20 @@
       validate(field);
     });
     if (!isValidationError) {
-      lock();
-      window.backend.save(setFormData(), onSubmitSuccess, onSubmitError);
+      upload();
     }
   };
 
   var onSubmitSuccess = function () {
+    window.spinner.hide();
     window.alerts.showSuccess('Ваше объявление<br>успешно размещено!');
     unlock();
     window.app.resetPage();
-
   };
 
   var onSubmitError = function (errorText) {
-    window.alerts.showError('Ваше объявление не размещено.<br>' + errorText, function () {
-      lock();
-      window.backend.save(setFormData(), onSubmitSuccess, onSubmitError);
-    });
+    window.spinner.hide();
+    window.alerts.showError('Ваше объявление не размещено.<br>' + errorText, upload);
     unlock();
   };
 
@@ -263,6 +260,11 @@
     return formData;
   };
 
+  var upload = function () {
+    lock();
+    window.backend.save(setFormData(), onSubmitSuccess, onSubmitError);
+    window.spinner.show();
+  };
 
   window.adForm = {
     activate: function () {
