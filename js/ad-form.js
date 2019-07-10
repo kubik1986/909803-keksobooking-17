@@ -3,6 +3,8 @@
 (function () {
 
   var VALIDATION_ERROR_CLASS = 'js-error-message';
+  var AVATAR_FILE_TYPES = ['jpg', 'jpeg', 'png', 'gif'];
+  var PHOTO_FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
   var TitleLengthLimit = {
     MIN: 30,
@@ -13,7 +15,7 @@
   var formFields = form.querySelectorAll('fieldset');
   var addressInput = form.querySelector('#address');
   var titleInput = form.querySelector('#title');
-  var typeInput = form.querySelector('#type');
+  var typeSelect = form.querySelector('#type');
   var priceInput = form.querySelector('#price');
   var timeinSelect = form.querySelector('#timein');
   var timeoutSelect = form.querySelector('#timeout');
@@ -21,6 +23,7 @@
   var capacitySelect = form.querySelector('#capacity');
   var formReset = form.querySelector('.ad-form__reset');
   var formSubmit = form.querySelector('.ad-form__submit');
+  var notFileFields = form.querySelectorAll('input:not([type="file"]), select, textarea');
   var validatingFields = [
     titleInput,
     priceInput,
@@ -35,6 +38,41 @@
     'house': 5000,
     'palace': 10000
   };
+
+  var avatarLoader = new window.ImageLoader({
+    maxFilesAmount: 1,
+    previewInsertPosition: 'start',
+    fileChooser: form.querySelector('#avatar'),
+    dropZone: form.querySelector('.ad-form-header__drop-zone'),
+    loaderContainer: form.querySelector('.ad-form-header__upload'),
+    preview: form.querySelector('.ad-form-header__preview'),
+    highlightClass: 'ad-form-header__drop-zone--highlighted',
+    fileTypes: AVATAR_FILE_TYPES,
+    maxFileSize: 300, // KB
+    imgSize: {
+      width: 40,
+      height: 44
+    },
+    imgAlt: 'Аватар пользователя'
+  });
+
+  var photoLoader = new window.ImageLoader({
+    maxFilesAmount: 16,
+    previewInsertPosition: 'end',
+    fileChooser: form.querySelector('#images'),
+    dropZone: form.querySelector('.ad-form__drop-zone'),
+    loaderContainer: form.querySelector('.ad-form__photo-container'),
+    preview: form.querySelector('.ad-form__photo'),
+    highlightClass: 'ad-form__drop-zone--highlighted',
+    fileTypes: PHOTO_FILE_TYPES,
+    maxFileSize: 1024, // KB
+    imgSize: {
+      width: 70,
+      height: 70
+    },
+    imgAlt: 'Фотография жилья'
+  });
+
 
   var onFormResetClick = function (evt) {
     evt.preventDefault();
@@ -79,23 +117,24 @@
       validate(field);
     });
     if (!isValidationError) {
-      formSubmit.disabled = true;
-      window.backend.save(new FormData(form), onSubmitSuccess, onSubmitError);
+      lock();
+      window.backend.save(setFormData(), onSubmitSuccess, onSubmitError);
     }
   };
 
   var onSubmitSuccess = function () {
     window.alerts.showSuccess('Ваше объявление<br>успешно размещено!');
+    unlock();
     window.app.resetPage();
-    formSubmit.disabled = false;
+
   };
 
   var onSubmitError = function (errorText) {
     window.alerts.showError('Ваше объявление не размещено.<br>' + errorText, function () {
-      formSubmit.disabled = true;
-      window.backend.save(new FormData(form), onSubmitSuccess, onSubmitError);
+      lock();
+      window.backend.save(setFormData(), onSubmitSuccess, onSubmitError);
     });
-    formSubmit.disabled = false;
+    unlock();
   };
 
   var setTitleValidity = function () {
@@ -186,13 +225,51 @@
     });
   };
 
+  var lock = function () {
+    form.classList.add('ad-form--disabled');
+    window.utils.deactivateFormFields(formFields);
+    avatarLoader.deactivate();
+    photoLoader.deactivate();
+  };
+
+  var unlock = function () {
+    form.classList.remove('ad-form--disabled');
+    window.utils.activateFormFields(formFields);
+    avatarLoader.activate();
+    photoLoader.activate();
+  };
+
+  var setFormData = function () {
+    var formData = new FormData();
+
+    notFileFields.forEach(function (field) {
+      if (field.type !== 'checkbox' || field.checked) {
+        formData.append(field.name, field.value);
+      }
+    });
+
+    var avatar = avatarLoader.getFiles();
+    if (avatar.length > 0) {
+      formData.append('avatar', avatar[0], avatar[0].name);
+    }
+
+    var photos = photoLoader.getFiles();
+    if (photos.length > 0) {
+      photos.forEach(function (photo) {
+        formData.append('images', photo, photo.name);
+      });
+    }
+
+    return formData;
+  };
+
+
   window.adForm = {
     activate: function () {
-      form.classList.remove('ad-form--disabled');
-      setPrice(typeInput.value);
+      unlock();
+      setPrice(typeSelect.value);
       setTimes(timeinSelect.value);
       setCapacity(roomNumberSelect.value);
-      window.utils.activateFormFields(formFields);
 
       form.addEventListener('change', onFormChange);
       formSubmit.addEventListener('click', onFormSubmitClick);
@@ -202,11 +279,13 @@
     },
 
     deactivate: function () {
-      form.classList.add('ad-form--disabled');
-      window.utils.deactivateFormFields(formFields);
+      lock();
 
       if (isFormActive) {
         form.reset();
+        avatarLoader.reset();
+        photoLoader.reset();
+
         if (isValidationError) {
           clearValidationErrors();
         }
