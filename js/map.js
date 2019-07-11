@@ -189,10 +189,7 @@
     },
 
     updatePins: function () {
-      var activeElement = document.activeElement;
-
       window.map.closeCard();
-      activeElement.focus();
       window.map.clearPins();
       window.data.filterAds();
       window.map.renderPins(window.data.filteredAds);
@@ -224,7 +221,6 @@
     closeCard: function () {
       if (isCardRendered) {
         clearCard();
-        activePin.focus();
         resetActivePin();
       }
     }
