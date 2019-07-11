@@ -1280,10 +1280,16 @@ fieldset {
   display: none;
 }
 
-.spinner img {
+.spinner::after {
   position: absolute;
   left: 50%;
   bottom: 105%;
+
+  width: 40px;
+  height: 44px;
+  content: "";
+
+  background-image: url("../img/muffin-red.svg");
 
   -webkit-transform: translateX(-50%);
           transform: translateX(-50%);
