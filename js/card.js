@@ -57,8 +57,8 @@
       }
 
       if (ad.offer.hasOwnProperty('photos') && ad.offer.photos.length > 0) {
-        cardElement.querySelector('.popup__photo').remove();
         var fragment = document.createDocumentFragment();
+        cardElement.querySelector('.popup__photo').remove();
         ad.offer.photos.forEach(function (photoURL) {
           var photo = document.createElement('img');
           photo.src = photoURL;

@@ -6,13 +6,14 @@
   var URL_GET = URL_POST + '/data';
   var GET_TIMEOUT = 5000;
   var POST_TIMEOUT = 15000;
+  var HTTP_OK_STATUS = 200;
 
   var xhrSetup = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
+      if (xhr.status === HTTP_OK_STATUS) {
         onLoad(xhr.response);
       } else {
         onError('Произошла ошибка. Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
