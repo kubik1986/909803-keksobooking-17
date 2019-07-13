@@ -57,6 +57,6 @@ gulp.task('build', gulp.series(
   'js'
 ));
 
-gulp.task('deploy', function () {
-  ghPages.publish('build', function (err) {});
+gulp.task('deploy', function (cb) {
+  ghPages.publish('build',cb);
 });
