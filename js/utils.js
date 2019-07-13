@@ -24,14 +24,6 @@
   var lastTimeout;
 
   window.utils = {
-    getRandomArrayItem: function (array) {
-      return array[Math.floor(Math.random() * array.length)];
-    },
-
-    getRandomNumberFromRange: function (min, max) {
-      return Math.floor(Math.random() * (max + 1 - min)) + min;
-    },
-
     shuffleArray: function (array) {
       for (var i = array.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
