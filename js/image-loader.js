@@ -159,11 +159,14 @@
         self._errors.unshift('Максимальное количество файлов - ' + self._maxFilesAmount);
       }
 
-      files.forEach(function (file) {
-        if (self._files.length < self._maxFilesAmount && self._validate(file)) {
-          self._files.push(file);
+      for (var i = 0; i < files.length; i++) {
+        if (self._files.length === self._maxFilesAmount) {
+          break;
         }
-      });
+        if (self._validate(files[i])) {
+          self._files.push(files[i]);
+        }
+      }
 
       if (self._errors.length > 0) {
         if (self._files.length === 0) {
