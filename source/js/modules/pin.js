@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+;(function () { // eslint-disable-line
 
   var pinTemplate = document.querySelector('#pin')
       .content

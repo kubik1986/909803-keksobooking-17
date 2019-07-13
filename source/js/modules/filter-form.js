@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+;(function () { // eslint-disable-line
 
   var DEFAULT_SELECT_VALUE = 'any';
 

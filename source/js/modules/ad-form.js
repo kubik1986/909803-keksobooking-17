@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+;(function () { // eslint-disable-line
 
   var VALIDATION_ERROR_CLASS = 'js-error-message';
   var AVATAR_FILE_TYPES = ['jpg', 'jpeg', 'png', 'gif'];

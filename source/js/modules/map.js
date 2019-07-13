@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+;(function () { // eslint-disable-line
 
   var LocationLimit = {
     MIN_Y: 170,

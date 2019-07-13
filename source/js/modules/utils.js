@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+;(function () { // eslint-disable-line
 
   var DEBOUNCE_INTERVAL = 500;
 

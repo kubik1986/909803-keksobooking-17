@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+;(function () { // eslint-disable-line
 
   var onAdsLoad = function (ads) {
     window.data.ads = ads;

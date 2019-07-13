@@ -1,6 +1,7 @@
 'use strict';
 
-(function () {
+;(function () { // eslint-disable-line
+
   var PhotoSize = {
     WIDTH: 45,
     HEIGHT: 40

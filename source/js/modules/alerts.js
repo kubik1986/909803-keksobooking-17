@@ -1,6 +1,7 @@
 'use strict';
 
-(function () {
+;(function () { // eslint-disable-line
+
   var main = document.querySelector('main');
   var errorTemplate = document.querySelector('#error')
       .content
