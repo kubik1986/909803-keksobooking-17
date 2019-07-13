@@ -75,12 +75,6 @@
       }
     },
 
-    onEnterPress: function (evt, cb) {
-      if (evt.keyCode === KeyCode.ENTER) {
-        cb();
-      }
-    },
-
     debounce: function (cb) {
       if (lastTimeout) {
         window.clearTimeout(lastTimeout);
