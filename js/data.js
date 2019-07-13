@@ -29,7 +29,7 @@
   };
 
   var checkSimpleProperty = function (offerValue, filterValue) {
-    return filterValue === window.filterForm.DEFAULT_SELECT_VALUE || filterValue === offerValue.toString();
+    return filterValue === window.filterForm.defaultSelectValue || filterValue === offerValue.toString();
   };
 
   window.data = {

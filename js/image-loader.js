@@ -2,6 +2,8 @@
 
 (function () {
 
+  var VALIDATION_ERROR_CLASS = 'js-file-error';
+
   var Byte = {
     KB: 1024,
     MB: 1024 * 1024,
@@ -44,7 +46,7 @@
     _alert: function (message) {
       var alert = document.createElement('p');
 
-      alert.classList.add('file-error');
+      alert.classList.add(VALIDATION_ERROR_CLASS);
       alert.innerHTML = message;
       alert.style.marginTop = '10px';
       alert.style.marginBottom = '10px';
@@ -79,7 +81,7 @@
     },
 
     _clearErrors: function () {
-      var error = this._loaderContainer.parentElement.querySelector('.file-error');
+      var error = this._loaderContainer.parentElement.querySelector('.' + VALIDATION_ERROR_CLASS);
 
       this._errors = [];
       if (error) {

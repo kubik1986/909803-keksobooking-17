@@ -2,6 +2,8 @@
 
 (function () {
 
+  var DEFAULT_SELECT_VALUE = 'any';
+
   var filtersNameMap = {
     'housing-type': 'type',
     'housing-price': 'price',
@@ -20,8 +22,7 @@
   };
 
   window.filterForm = {
-    DEFAULT_SELECT_VALUE: 'any',
-
+    defaultSelectValue: DEFAULT_SELECT_VALUE,
     state: {},
 
     updateState: function (key, value) {
@@ -35,10 +36,10 @@
     deactivate: function () {
       form.reset();
       this.state = {
-        type: this.DEFAULT_SELECT_VALUE,
-        price: this.DEFAULT_SELECT_VALUE,
-        rooms: this.DEFAULT_SELECT_VALUE,
-        guests: this.DEFAULT_SELECT_VALUE,
+        type: this.defaultSelectValue,
+        price: this.defaultSelectValue,
+        rooms: this.defaultSelectValue,
+        guests: this.defaultSelectValue,
         features: []
       };
       window.utils.deactivateFormFields(formFields);
