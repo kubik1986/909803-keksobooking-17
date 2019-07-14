@@ -16,7 +16,7 @@
   var pinsBlock = map.querySelector('.map__pins');
   var pins = [];
   var activePin = null;
-  var isCardRendered = false;
+  var card = null;
 
   var mainPin = {
     element: document.querySelector('.map__pin--main'),
@@ -113,7 +113,7 @@
       return;
     }
 
-    if (isCardRendered) {
+    if (card) {
       clearCard();
       resetActivePin();
     }
@@ -141,9 +141,8 @@
   };
 
   var openCard = function (pinID) {
-    var card = window.card.create(window.data.filteredAds[pinID]);
+    card = window.card.create(window.data.filteredAds[pinID]);
     map.appendChild(card);
-    isCardRendered = true;
 
     var cardCloseBtn = card.querySelector('.popup__close');
 
@@ -152,8 +151,8 @@
   };
 
   var clearCard = function () {
-    map.querySelector('.map__card').remove();
-    isCardRendered = false;
+    card.remove();
+    card = null;
 
     document.removeEventListener('keydown', onCardEscPress);
   };
@@ -219,7 +218,7 @@
     },
 
     closeCard: function () {
-      if (isCardRendered) {
+      if (card) {
         clearCard();
         resetActivePin();
       }
