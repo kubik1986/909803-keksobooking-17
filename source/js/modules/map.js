@@ -158,6 +158,10 @@
   };
 
   window.map = {
+    initMainPinHandler: function () {
+      mainPin.element.addEventListener('mousedown', onMainPinMousedown);
+    },
+
     activate: function () {
       map.classList.remove('map--faded');
     },
@@ -224,7 +228,5 @@
       }
     }
   };
-
-  mainPin.element.addEventListener('mousedown', onMainPinMousedown);
 
 })();

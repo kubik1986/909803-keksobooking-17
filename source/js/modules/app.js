@@ -16,6 +16,7 @@
   };
 
   var initPage = function () {
+    window.map.initMainPinHandler();
     window.app.resetPage();
     window.filterForm.init();
   };
