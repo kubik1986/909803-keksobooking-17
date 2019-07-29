@@ -290,6 +290,7 @@
 
         if (isValidationError) {
           clearValidationErrors();
+          isValidationError = false;
         }
 
         form.removeEventListener('change', onFormChange);
