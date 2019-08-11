@@ -25,7 +25,6 @@
     this._isActive = false; // флаг активного состояния
     this._files = []; // массив файлов, передаваемый в FormData
     this._errors = []; // массив сообщений об ошибках
-    // this._alert = window.alerts.showErrorNoCallback;
 
     this._init.call(this);
   };
