@@ -65,11 +65,11 @@
       });
 
       if (!matches) {
-        if (this._errors.indexOf(typeError) === -1) {
+        if (!this._errors.includes(typeError)) {
           this._errors.push(typeError);
         }
       } else if (file.size > this._maxFileSize * Byte.KB) {
-        if (this._errors.indexOf(sizeError) === -1) {
+        if (!this._errors.includes(sizeError)) {
           this._errors.push(sizeError);
         }
       } else {
