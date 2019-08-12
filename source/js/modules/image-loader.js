@@ -26,7 +26,7 @@
     this._files = []; // массив файлов, передаваемый в FormData
     this._errors = []; // массив сообщений об ошибках
 
-    this._init.call(this);
+    this._init();
   };
 
   window.ImageLoader.prototype = {
