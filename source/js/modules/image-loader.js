@@ -1,6 +1,6 @@
 'use strict';
 
-;(function () { // eslint-disable-line
+(function () {
 
   var VALIDATION_ERROR_CLASS = 'js-file-error';
 

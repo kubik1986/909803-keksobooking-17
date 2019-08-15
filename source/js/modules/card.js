@@ -1,6 +1,6 @@
 'use strict';
 
-;(function () { // eslint-disable-line
+(function () {
 
   var PhotoSize = {
     WIDTH: 45,

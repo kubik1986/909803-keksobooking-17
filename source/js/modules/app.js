@@ -1,6 +1,6 @@
 'use strict';
 
-;(function () { // eslint-disable-line
+(function () {
 
   var onAdsLoad = function (ads) {
     window.data.ads = ads;
@@ -17,8 +17,9 @@
 
   var initPage = function () {
     window.map.initMainPinHandler();
-    window.app.resetPage();
     window.filterForm.init();
+    window.adForm.init();
+    window.app.resetPage();
   };
 
   window.app = {

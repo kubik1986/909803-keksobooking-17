@@ -1,6 +1,6 @@
 'use strict';
 
-;(function () { // eslint-disable-line
+(function () {
 
   var URL_POST = 'https://js.dump.academy/keksobooking';
   var URL_GET = URL_POST + '/data';

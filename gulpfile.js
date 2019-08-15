@@ -12,19 +12,8 @@ var ghPages = require('gh-pages');
 gulp.task('js', function () {
   return gulp.src('source/js/modules/**/*.js')
     .pipe(order([
-      'utils.js',
-      'spinner.js',
-      'custom-validation.js',
-      'alerts.js',
-      'backend.js',
-      'filter-form.js',
-      'data.js',
-      'pin.js',
-      'card.js',
-      'map.js',
-      'image-loader.js',
-      'ad-form.js',
-      'app.js'
+      '!app.js',
+      '*.js'
     ]))
     .pipe(concat('app.js'))
     .pipe(uglify())

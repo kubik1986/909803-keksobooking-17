@@ -1,10 +1,26 @@
 'use strict';
 
-;(function () { // eslint-disable-line
+(function () {
 
   var VALIDATION_ERROR_CLASS = 'js-error-message';
-  var AVATAR_FILE_TYPES = ['jpg', 'jpeg', 'png', 'gif'];
-  var PHOTO_FILE_TYPES = ['jpg', 'jpeg', 'png'];
+
+  var AvatarLoader = {
+    FILE_TYPES: ['jpg', 'jpeg', 'png', 'gif'],
+    MAX_FILE_SIZE: 300, // KB
+    ImageSize: {
+      WIDTH: 40,
+      HEIGHT: 44
+    }
+  };
+
+  var PhotoLoader = {
+    FILE_TYPES: ['jpg', 'jpeg', 'png'],
+    MAX_FILE_SIZE: 1024, // KB
+    ImageSize: {
+      WIDTH: 70,
+      HEIGHT: 70
+    }
+  };
 
   var TitleLengthLimit = {
     MIN: 30,
@@ -31,6 +47,8 @@
   ];
   var isFormActive = false;
   var isValidationError = false;
+  var avatarLoader;
+  var photoLoader;
 
   var offerMinPricesMap = {
     'bungalo': 0,
@@ -38,41 +56,6 @@
     'house': 5000,
     'palace': 10000
   };
-
-  var avatarLoader = new window.ImageLoader({
-    maxFilesAmount: 1,
-    previewInsertPosition: 'start',
-    fileChooser: form.querySelector('#avatar'),
-    dropZone: form.querySelector('.ad-form-header__drop-zone'),
-    loaderContainer: form.querySelector('.ad-form-header__upload'),
-    preview: form.querySelector('.ad-form-header__preview'),
-    highlightClass: 'ad-form-header__drop-zone--highlighted',
-    fileTypes: AVATAR_FILE_TYPES,
-    maxFileSize: 300, // KB
-    imgSize: {
-      width: 40,
-      height: 44
-    },
-    imgAlt: 'Аватар пользователя'
-  });
-
-  var photoLoader = new window.ImageLoader({
-    maxFilesAmount: 16,
-    previewInsertPosition: 'end',
-    fileChooser: form.querySelector('#images'),
-    dropZone: form.querySelector('.ad-form__drop-zone'),
-    loaderContainer: form.querySelector('.ad-form__photo-container'),
-    preview: form.querySelector('.ad-form__photo'),
-    highlightClass: 'ad-form__drop-zone--highlighted',
-    fileTypes: PHOTO_FILE_TYPES,
-    maxFileSize: 1024, // KB
-    imgSize: {
-      width: 70,
-      height: 70
-    },
-    imgAlt: 'Фотография жилья'
-  });
-
 
   var onFormResetClick = function (evt) {
     evt.preventDefault();
@@ -267,6 +250,42 @@
   };
 
   window.adForm = {
+    init: function () {
+      avatarLoader = new window.ImageLoader({
+        maxFilesAmount: 1,
+        previewInsertPosition: 'start',
+        fileChooser: form.querySelector('#avatar'),
+        dropZone: form.querySelector('.ad-form-header__drop-zone'),
+        loaderContainer: form.querySelector('.ad-form-header__upload'),
+        preview: form.querySelector('.ad-form-header__preview'),
+        highlightClass: 'ad-form-header__drop-zone--highlighted',
+        fileTypes: AvatarLoader.FILE_TYPES,
+        maxFileSize: AvatarLoader.MAX_FILE_SIZE,
+        imgSize: {
+          width: AvatarLoader.ImageSize.WIDTH,
+          height: AvatarLoader.ImageSize.HEIGHT
+        },
+        imgAlt: 'Аватар пользователя'
+      });
+
+      photoLoader = new window.ImageLoader({
+        maxFilesAmount: 16,
+        previewInsertPosition: 'end',
+        fileChooser: form.querySelector('#images'),
+        dropZone: form.querySelector('.ad-form__drop-zone'),
+        loaderContainer: form.querySelector('.ad-form__photo-container'),
+        preview: form.querySelector('.ad-form__photo'),
+        highlightClass: 'ad-form__drop-zone--highlighted',
+        fileTypes: PhotoLoader.FILE_TYPES,
+        maxFileSize: PhotoLoader.MAX_FILE_SIZE,
+        imgSize: {
+          width: PhotoLoader.ImageSize.WIDTH,
+          height: PhotoLoader.ImageSize.HEIGHT
+        },
+        imgAlt: 'Фотография жилья'
+      });
+    },
+
     activate: function () {
       unlock();
       setPrice(typeSelect.value);
