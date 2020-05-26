@@ -2,7 +2,7 @@
 
 (function () {
 
-  var URL_POST = 'https://js.dump.academy/keksobooking';
+  var URL_POST = 'https://javascript.pages.academy/keksobooking';
   var URL_GET = URL_POST + '/data';
   var GET_TIMEOUT = 5000;
   var POST_TIMEOUT = 30000;
